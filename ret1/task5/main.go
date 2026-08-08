@@ -2,10 +2,12 @@ package main
 
 import "fmt"
 
-func CountTo (n int) int {
-	for i := 0; i > n; i++ {
+func CountTo(n int) int {
+	x := 0
+	for i := 1; i <= n; i++ {
+		x = x + i
 	}
-	return n
+	return x
 }
 
 func main() {

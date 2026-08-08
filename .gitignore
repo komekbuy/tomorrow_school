@@ -1,2 +1,11 @@
-piscinego/
 .DS_Store
+
+# отдельные репозитории школы — у каждого свой .git
+piscinego/
+Quad-team/
+sudoku/
+sudoku-1/
+
+# скомпилированные бинарники
+quad/quad
+*.exe

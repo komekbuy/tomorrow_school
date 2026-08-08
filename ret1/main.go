@@ -11,6 +11,4 @@ func FirstBig(limit int) int{
 	return 0
 }
 
-func main() {
-	fmt.Println(FirstBig(1000))
-}
+func main()
