@@ -1,7 +1,8 @@
 # Tomorrow School — правила работы
 
 > Версия 27.07.2026. Проектный CLAUDE.md.
-> **Vault (Obsidian):** `/Users/komekbuy/Мой диск/DriveSyncFiles/01_projects/tomorrow-school/`
+> **Vault (Obsidian):** `~/Google Drive/Мой диск/DriveSyncFiles/01_projects/tomorrow-school/`
+> ⚠️ Не `~/Мой диск/` — на MacBook это мёртвая локальная папка (см. `vault-split-two-drives` в глобальном vault). До 16.08.2026 весь школьный vault писался именно туда и не синхронизировался никуда.
 
 ## Кто я здесь
 
