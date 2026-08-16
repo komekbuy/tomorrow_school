@@ -9,3 +9,9 @@ sudoku-1/
 # скомпилированные бинарники
 quad/quad
 *.exe
+
+# рабочий мусор и собранное — в репозиторий не нужно
+tmp/
+raid3-proverka/
+quadchecker/quadchecker
+guide/index.html

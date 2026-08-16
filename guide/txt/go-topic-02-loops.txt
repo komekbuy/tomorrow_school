@@ -1,0 +1,294 @@
+==============================================================================
+GO FROM ZERO · TOPIC 2 — LOOPS
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#02-loops
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir loop1
+    cd loop1
+    go mod init loop1
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i < 5; i++ {
+		fmt.Println(i)
+	}
+}
+
+OUTPUT:
+0
+1
+2
+3
+4
+
+Five lines, not six: the counter started at zero and stopped at four — five already fails i < 5.
+Break it: remove i++ and run. The program hangs — stop it with Ctrl+C.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the strict comparison became non-strict
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i <= 5; i++ {
+		fmt.Println(i)
+	}
+}
+
+OUTPUT:
+0
+1
+2
+3
+4
+5
+
+One character changed and the loop takes six steps instead of five. The compiler says nothing: both forms are legal. This is the off-by-one error.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: printing a star instead of the counter
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i <= 5; i++ {
+		fmt.Print("*")
+	}
+	fmt.Println()
+}
+
+OUTPUT:
+******
+
+Six stars, because the non-strict bound from the previous example is still there. i no longer appears in the body — it just counts and never reaches the screen.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: the strict bound is back
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i < 5; i++ {
+		fmt.Print("*")
+	}
+	fmt.Println()
+}
+
+OUTPUT:
+*****
+
+Five stars. The body didn't change at all — the number of repeats is set by the loop header alone.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: a second loop wrapped around it
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for row := 0; row < 3; row++ {
+		for i := 0; i < 5; i++ {
+			fmt.Print("*")
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+*****
+*****
+*****
+
+The inner loop runs completely on every outer step: 3 × 5 = 15 stars. fmt.Println() moved into the outer body — once per row.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: printing the inner counter instead of a star
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for row := 0; row < 3; row++ {
+		for i := 0; i < 5; i++ {
+			fmt.Print(i)
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+01234
+01234
+01234
+
+The rows are identical — so the inner counter restarts every time. It is created on each outer step and dies with it.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: the line break moved inside the inner loop
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for row := 0; row < 3; row++ {
+		for i := 0; i < 5; i++ {
+			fmt.Print(i)
+			fmt.Println()
+		}
+	}
+}
+
+OUTPUT:
+0
+1
+2
+3
+4
+0
+1
+2
+3
+4
+0
+1
+2
+3
+4
+
+The picture fell apart into a column of fifteen lines. Only one thing changed — where Println sits. Remember this output: you'll meet it in your own shape tasks.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: break added (the line break is back where it belongs)
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for row := 0; row < 3; row++ {
+		for i := 0; i < 5; i++ {
+			if i == 3 {
+				break
+			}
+			fmt.Print(i)
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+012
+012
+012
+
+The inner loop is declared up to five but ends at three. Note: break left only the inner loop — the outer one calmly took all three steps.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: break became continue
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	for row := 0; row < 3; row++ {
+		for i := 0; i < 5; i++ {
+			if i == 3 {
+				continue
+			}
+			fmt.Print(i)
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+0124
+0124
+0124
+
+It was 012, now it's 0124. break ends the loop, continue skips one step and carries on — the three vanished, the four stayed.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: the counted loop was replaced by range
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	nums := []int{10, 20, 30}
+	for i, v := range nums {
+		fmt.Println(i, v)
+	}
+	for i, c := range "Go!" {
+		fmt.Println(i, c, string(c))
+	}
+}
+
+OUTPUT:
+0 10
+1 20
+2 30
+0 71 G
+1 111 o
+2 33 !
+
+The first variable is the index, the second is the value. Over a string the value arrives as a rune, that is a number: 71 and G on one line are the same thing.
+Break it: drop v and leave for i := range nums — the output becomes 0, 1, 2.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

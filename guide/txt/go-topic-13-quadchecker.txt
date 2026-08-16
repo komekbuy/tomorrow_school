@@ -1,0 +1,404 @@
+==============================================================================
+GO FROM ZERO · TOPIC 13 — THE QUADCHECKER PROJECT
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#13-quadchecker
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir quadchecker
+    cd quadchecker
+    go mod init quadchecker
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+}
+
+func main() {
+	a := quad{name: "quadA", tl: 'o'}
+	fmt.Println(a.name)
+}
+
+OUTPUT:
+quadA
+
+type ... struct creates nothing — it declares a type. The variable appears at a := quad{...}. Fields are reached through a dot: a.name.
+Break it: write a.quad and read the error.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: we print the second field too
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+}
+
+func main() {
+	a := quad{name: "quadA", tl: 'o'}
+	fmt.Println(a.name)
+	fmt.Println(a.tl)
+}
+
+OUTPUT:
+quadA
+111
+
+The second field printed as a number. A rune is a number, the code of a character; for "o" it is 111. Nothing is wrong — that is how it works.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: the same rune shown as a character
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+}
+
+func main() {
+	a := quad{name: "quadA", tl: 'o'}
+	fmt.Println(a.tl)
+	fmt.Println(string(a.tl))
+}
+
+OUTPUT:
+111
+o
+
+string(...) turns the number into the character with that code. The value in memory did not change — only the way it is shown.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: several structs now — a slice appears
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+}
+
+func main() {
+	quads := []quad{
+		{"quadA", 'o'},
+		{"quadB", '/'},
+	}
+	for _, q := range quads {
+		fmt.Println(q.name, string(q.tl))
+	}
+}
+
+OUTPUT:
+quadA o
+quadB /
+
+Field names may be omitted if the values come in the same order as in the type declaration. The walk is a plain range; the index is not needed, hence the underscore.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: six fields now — the shape is fully described
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+	tr   rune
+	bl   rune
+	br   rune
+	hor  rune
+	ver  rune
+}
+
+func main() {
+	a := quad{"quadA", 'o', 'o', 'o', 'o', '-', '|'}
+	fmt.Println(string(a.tl), string(a.hor), string(a.ver))
+}
+
+OUTPUT:
+o - |
+
+Four corners, a horizontal and a vertical — those six characters describe any of the five shapes. The whole difference between quadA and quadE lives right here.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: a function about a cell appears — corners only so far
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+	tr   rune
+	bl   rune
+	br   rune
+	hor  rune
+	ver  rune
+}
+
+func cell(q quad, row, col, w, h int) rune {
+	if row == 0 && col == 0 {
+		return q.tl
+	}
+	if row == 0 && col == w-1 {
+		return q.tr
+	}
+	return ' '
+}
+
+func main() {
+	a := quad{"quadA", 'o', 'o', 'o', 'o', '-', '|'}
+	fmt.Printf("%q %q %q\n", string(cell(a, 0, 0, 3, 3)), string(cell(a, 0, 2, 3, 3)), string(cell(a, 1, 1, 3, 3)))
+}
+
+OUTPUT:
+"o" "o" " "
+
+The function looks at the cell's address, not at characters. w-1 is the last column: counting starts at zero, so in width 3 the last one is index 2. %q prints with quotes so the space is visible.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: the bottom corners and both sides are added
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+	tr   rune
+	bl   rune
+	br   rune
+	hor  rune
+	ver  rune
+}
+
+func cell(q quad, row, col, w, h int) rune {
+	if row == 0 && col == 0 {
+		return q.tl
+	}
+	if row == 0 && col == w-1 {
+		return q.tr
+	}
+	if row == h-1 && col == 0 {
+		return q.bl
+	}
+	if row == h-1 && col == w-1 {
+		return q.br
+	}
+	if row == 0 || row == h-1 {
+		return q.hor
+	}
+	if col == 0 || col == w-1 {
+		return q.ver
+	}
+	return ' '
+}
+
+func main() {
+	a := quad{"quadA", 'o', 'o', 'o', 'o', '-', '|'}
+	fmt.Printf("%q %q %q %q\n", string(cell(a, 0, 1, 3, 3)), string(cell(a, 1, 0, 3, 3)), string(cell(a, 2, 2, 3, 3)), string(cell(a, 1, 1, 3, 3)))
+}
+
+OUTPUT:
+"-" "|" "o" " "
+
+Six checks run top to bottom and the first one that fits wins. All four corners first, then the sides, then the space.
+Break it: move the row == 0 || row == h-1 check above the corners — every corner turns into a horizontal character.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: learning to build a line out of runes
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	line := make([]rune, 3)
+	for col := 0; col < 3; col++ {
+		line[col] = 'x'
+	}
+	fmt.Println(string(line))
+	fmt.Println(len(line))
+}
+
+OUTPUT:
+xxx
+3
+
+make([]rune, 3) reserves room for three characters at once — the length is known upfront, so no append is needed. string(...) at the end glues the runes into a string.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: building a real picture line instead of x-es
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+	tr   rune
+	bl   rune
+	br   rune
+	hor  rune
+	ver  rune
+}
+
+func cell(q quad, row, col, w, h int) rune {
+	if row == 0 && col == 0 {
+		return q.tl
+	}
+	if row == 0 && col == w-1 {
+		return q.tr
+	}
+	if row == h-1 && col == 0 {
+		return q.bl
+	}
+	if row == h-1 && col == w-1 {
+		return q.br
+	}
+	if row == 0 || row == h-1 {
+		return q.hor
+	}
+	if col == 0 || col == w-1 {
+		return q.ver
+	}
+	return ' '
+}
+
+func main() {
+	a := quad{"quadA", 'o', 'o', 'o', 'o', '-', '|'}
+	w, h := 5, 3
+	line := make([]rune, w)
+	for col := 0; col < w; col++ {
+		line[col] = cell(a, 0, col, w, h)
+	}
+	fmt.Println(string(line))
+}
+
+OUTPUT:
+o---o
+
+This is already the top line of a real frame. The loop walked five cells, asked cell about each and put the answer in its place.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: many lines now — and we compare them
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+type quad struct {
+	name string
+	tl   rune
+	tr   rune
+	bl   rune
+	br   rune
+	hor  rune
+	ver  rune
+}
+
+func cell(q quad, row, col, w, h int) rune {
+	if row == 0 && col == 0 {
+		return q.tl
+	}
+	if row == 0 && col == w-1 {
+		return q.tr
+	}
+	if row == h-1 && col == 0 {
+		return q.bl
+	}
+	if row == h-1 && col == w-1 {
+		return q.br
+	}
+	if row == 0 || row == h-1 {
+		return q.hor
+	}
+	if col == 0 || col == w-1 {
+		return q.ver
+	}
+	return ' '
+}
+
+func main() {
+	a := quad{"quadA", 'o', 'o', 'o', 'o', '-', '|'}
+	want := []string{"o---o", "|   |", "o---o"}
+	w, h := 5, 3
+	same := true
+	for row := 0; row < h; row++ {
+		line := make([]rune, w)
+		for col := 0; col < w; col++ {
+			line[col] = cell(a, row, col, w, h)
+		}
+		fmt.Println(string(line))
+		if string(line) != want[row] {
+			same = false
+		}
+	}
+	fmt.Println(same)
+}
+
+OUTPUT:
+o---o
+|   |
+o---o
+true
+
+Here is the whole program in miniature: we drew our own, compared it with someone else's, said yes or no. In the real match there is one difference — at the first mismatch it does return false and the remaining lines are never computed.
+Break it: change want to {"o---o", "|   |", "x---x"}.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

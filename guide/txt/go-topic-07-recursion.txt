@@ -1,0 +1,324 @@
+==============================================================================
+GO FROM ZERO · TOPIC 7 — RECURSION
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#07-recursion
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir rec1
+    cd rec1
+    go mod init rec1
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func down(n int) {
+	if n == 0 {
+		return
+	}
+	fmt.Println(n)
+	down(n - 1)
+}
+
+func main() {
+	down(3)
+}
+
+OUTPUT:
+3
+2
+1
+
+The print is before the self-call, so the numbers come out on the way down, in the order the function dives. Zero is never printed: that is where the stop fires.
+Break it: remove if n == 0 { return } and run. In a fraction of a second you get fatal error: stack overflow — that is what recursion without a stop looks like.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the print moved below the call
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func down(n int) {
+	if n == 0 {
+		return
+	}
+	down(n - 1)
+	fmt.Println(n)
+}
+
+func main() {
+	down(3)
+}
+
+OUTPUT:
+1
+2
+3
+
+Two lines swapped and the output flipped. Nothing prints on the way down; once the deepest call has finished, each call prints its own n on the way back.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: printing both before and after the call
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func down(n int) {
+	if n == 0 {
+		return
+	}
+	fmt.Println(">", n)
+	down(n - 1)
+	fmt.Println("<", n)
+}
+
+func main() {
+	down(3)
+}
+
+OUTPUT:
+> 3
+> 2
+> 1
+< 1
+< 2
+< 3
+
+The way down on top, the way back below, mirror images of each other. The line < 3 is printed by the very first call, which was waiting the whole time: its n never went anywhere.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: the function now returns a number
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func sum(n int) int {
+	if n == 0 {
+		return 0
+	}
+	return n + sum(n-1)
+}
+
+func main() {
+	fmt.Println(sum(4))
+}
+
+OUTPUT:
+10
+
+A return instead of a print. The addition n + sum(n-1) cannot happen until the nested call gives back its number, so all the arithmetic runs on the way back.
+Break it: change return 0 to return 1 — the answer becomes 11. The bottom adds one extra, and it lands in the sum.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: a print of the result added inside
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func sum(n int) int {
+	if n == 0 {
+		return 0
+	}
+	r := n + sum(n-1)
+	fmt.Printf("sum(%d) = %d\n", n, r)
+	return r
+}
+
+func main() {
+	fmt.Println(sum(4))
+}
+
+OUTPUT:
+sum(1) = 1
+sum(2) = 3
+sum(3) = 6
+sum(4) = 10
+10
+
+The lines come out bottom-up: sum(1) first, sum(4) last. The numbers are assembled on the way back, from the bottom to the very first call. This is how you look inside a recursion you don't understand.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: plus became times, and the zero base became one
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func fact(n int) int {
+	if n == 0 {
+		return 1
+	}
+	r := n * fact(n-1)
+	fmt.Printf("fact(%d) = %d\n", n, r)
+	return r
+}
+
+func main() {
+	fmt.Println(fact(5))
+}
+
+OUTPUT:
+fact(1) = 1
+fact(2) = 2
+fact(3) = 6
+fact(4) = 24
+fact(5) = 120
+120
+
+Two small edits and the same shape computes a factorial.
+Break it: put return 0 back into the base. The answer becomes zero: everything is multiplied by that zero on the way back. The bottom value is part of the answer.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: the step toward the stop is division, not subtraction
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func digits(n int) int {
+	if n == 0 {
+		return 0
+	}
+	r := n%10 + digits(n/10)
+	fmt.Printf("digits(%d) = %d\n", n, r)
+	return r
+}
+
+func main() {
+	fmt.Println(digits(4821))
+}
+
+OUTPUT:
+digits(4) = 4
+digits(48) = 12
+digits(482) = 14
+digits(4821) = 15
+15
+
+The argument approaches zero by division: 4821 → 482 → 48 → 4 → 0. The shape is unchanged: a piece of this step (n%10) plus a call on the rest.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: the argument is a string, not a number
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func rev(s string) string {
+	if s == "" {
+		return ""
+	}
+	return rev(s[1:]) + s[:1]
+}
+
+func main() {
+	fmt.Println(rev("hello"))
+}
+
+OUTPUT:
+olleh
+
+Shortening is what moves toward the stop: s[1:] cuts off the first character, and the empty string is the bottom. The first character is appended on the right of the result, so the string comes out reversed.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: the function calls itself twice in one line
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func fib(n int) int {
+	if n < 2 {
+		return n
+	}
+	return fib(n-1) + fib(n-2)
+}
+
+func main() {
+	fmt.Println(fib(10))
+}
+
+OUTPUT:
+55
+
+The answer is right, but now two calls grow out of every one. Go evaluates them in order: the whole left fib(n-1) first, then the whole right one. Nothing is remembered, so the same numbers get recomputed.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: a call counter added
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+var calls int
+
+func fib(n int) int {
+	calls++
+	if n < 2 {
+		return n
+	}
+	return fib(n-1) + fib(n-2)
+}
+
+func main() {
+	fmt.Println(fib(10), calls)
+	calls = 0
+	fmt.Println(fib(20), calls)
+	calls = 0
+	fmt.Println(fib(25), calls)
+}
+
+OUTPUT:
+55 177
+6765 21891
+75025 242785
+
+The argument grew two and a half times, the work grew a thousandfold. Recursion isn't to blame — two calls in one line are: the same values get recomputed over and over.
+Break it: try 40 — the delay becomes obvious; 45 takes several seconds.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

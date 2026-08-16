@@ -1,0 +1,291 @@
+==============================================================================
+GO FROM ZERO · TOPIC 1 — DATA TYPES
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#01-types
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir type1
+    cd type1
+    go mod init type1
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 42
+	fmt.Println(x)
+	fmt.Printf("%T\n", x)
+}
+
+OUTPUT:
+42
+int
+
+%T shows the type — the fastest way to check what a variable actually holds.
+Break it: add y := 5 and don't use it. The program won't compile — Go doesn't allow unused variables.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the number got a dot
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 42.0
+	fmt.Println(x)
+	fmt.Printf("%T\n", x)
+}
+
+OUTPUT:
+42
+float64
+
+A trap: the screen shows “42” with no decimal, looking just like example 1 — but the type is different. You can't judge a type by what you see.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: double quotes appeared
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := "42"
+	fmt.Println(x)
+	fmt.Printf("%T\n", x)
+}
+
+OUTPUT:
+42
+string
+
+Same thing on screen again, but you can't do arithmetic with it. Break it: try x + 1.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: quotes became single
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := '4'
+	fmt.Println(x)
+	fmt.Println(string(x))
+	fmt.Printf("%T\n", x)
+}
+
+OUTPUT:
+52
+4
+int32
+
+52 is the code of the character “4”. rune and int32 are two names for one type.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: character minus character
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println('7' - '0')
+	fmt.Println(string(rune('0' + 7)))
+}
+
+OUTPUT:
+7
+7
+
+The first 7 is a number, the second is a character. Identical on screen, different underneath. Line one turns a character into a digit, line two turns it back.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: integer division and remainder
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	a := 7
+	b := 2
+	fmt.Println(a / b)
+	fmt.Println(a % b)
+	fmt.Println(float64(a) / float64(b))
+}
+
+OUTPUT:
+3
+1
+3.5
+
+Break it: remove float64 from one of the two numbers in the last line and read the error.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: string length: Latin and Cyrillic
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println(len("Hello"), len("Привет"))
+	fmt.Println("Hi"[0])
+	fmt.Println(string("Hi"[0]))
+}
+
+OUTPUT:
+5 12
+72
+H
+
+12, not 6 — len counts bytes. 72 is the code of “H”.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: looping a string — watch the numbers
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	s := "Привет"
+	count := 0
+	for i, c := range s {
+		fmt.Println(i, string(c))
+		count++
+	}
+	fmt.Println("букв:", count, "байтов:", len(s))
+}
+
+OUTPUT:
+0 П
+2 р
+4 и
+6 в
+8 е
+10 т
+букв: 6 байтов: 12
+
+The offset jumps by two — the previous letter took the odd one. Six steps but len is twelve: different numbers.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: a string can't change — but you can build a new one
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	s := "hello"
+	r := []rune(s)
+	r[0] = 'H'
+	fmt.Println(s)
+	fmt.Println(string(r))
+}
+
+OUTPUT:
+hello
+Hello
+
+The original didn't change — you edited a rune copy. Break it: try s[0] = 'H' directly.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: array, slice and zero values
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	arr := [3]int{1, 2, 3}
+	sl := []int{1, 2, 3}
+
+	sl = append(sl, 4)
+	arr[0] = 99
+
+	fmt.Println(arr, len(arr))
+	fmt.Println(sl, len(sl))
+
+	var n int
+	var s string
+	var b bool
+	var empty []int
+	fmt.Println(n, s == "", b, empty == nil, len(empty))
+}
+
+OUTPUT:
+[99 2 3] 3
+[1 2 3 4] 4
+0 true false true 0
+
+Break it, definitely: add arr = append(arr, 4) and read the error — it is the answer to how an array differs from a slice.
+
+------------------------------------------------------------------------------
+EXAMPLE 11.  What changed: several holes in one printed line
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 42
+	s := "Go"
+
+	fmt.Printf("%v %T\n", x, x)
+	fmt.Printf("%v %q\n", s, s)
+	fmt.Printf("%v %v\n", len(s), len(s) == 0)
+}
+
+OUTPUT:
+42 int
+Go "Go"
+2 false
+
+A line has as many holes as arguments after it, and they are matched in order. %v prints any value, %q prints a string with quotes — which is why Go and "Go" look different on the second line. On the third line the arguments aren't variables at all but expressions — evaluated on the spot. Break it: remove one argument and read what the program says.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

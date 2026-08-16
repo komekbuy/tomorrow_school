@@ -1,0 +1,281 @@
+==============================================================================
+GO FROM ZERO · TOPIC 6 — SLICES
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#06-slices
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir slice1
+    cd slice1
+    go mod init slice1
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	arr := [3]int{10, 20, 30}
+	fmt.Println(arr, len(arr))
+}
+
+OUTPUT:
+[10 20 30] 3
+
+An array: the size sits in the square brackets and is part of the type. Break it: add arr = append(arr, 40) and read the error — that's the whole point of this topic.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the number is gone from the brackets
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	sl := []int{10, 20, 30}
+	fmt.Println(sl, len(sl), cap(sl))
+}
+
+OUTPUT:
+[10 20 30] 3 3
+
+One change and it's a slice. Same values, nearly the same screen, different type. cap equals len for now: room was allocated for exactly three.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: two more ways to create a slice
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	var a []int
+	b := []int{10, 20, 30}
+	c := make([]int, 3)
+
+	fmt.Println(a, len(a), a == nil)
+	fmt.Println(b, len(b), b == nil)
+	fmt.Println(c, len(c), c == nil)
+}
+
+OUTPUT:
+[] 0 true
+[10 20 30] 3 false
+[0 0 0] 3 false
+
+a and c print alike but are different things: a has zero elements, c has three zeros. Break it: add a[0] = 1 and it crashes — there's nowhere to write.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: append appeared
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	a := []int{10, 20, 30}
+	fmt.Println(a, len(a), cap(a))
+
+	a = append(a, 40)
+	fmt.Println(a, len(a), cap(a))
+}
+
+OUTPUT:
+[10 20 30] 3 3
+[10 20 30 40] 4 6
+
+len grew by one but cap jumped straight to six: there was no room, so Go allocated a bigger block. Break it: drop the a =  in front of append and read the error.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: append moved into a loop
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	var a []int
+	for i := 1; i <= 5; i++ {
+		a = append(a, i*10)
+		fmt.Println(a, len(a), cap(a))
+	}
+}
+
+OUTPUT:
+[10] 1 1
+[10 20] 2 2
+[10 20 30] 3 4
+[10 20 30 40] 4 4
+[10 20 30 40 50] 5 8
+
+len grows by one, cap jumps 1, 2, 4, 8. The jump happens exactly when len hits cap. That's the data moving to a new place.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: iterating instead of adding
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	a := []int{10, 20, 30, 40, 50}
+
+	sum := 0
+	for i := 0; i < len(a); i++ {
+		sum += a[i]
+	}
+	fmt.Println(sum)
+
+	for i, v := range a {
+		fmt.Println(i, v)
+	}
+}
+
+OUTPUT:
+150
+0 10
+1 20
+2 30
+3 40
+4 50
+
+Two ways to walk a slice. Break it: change the first loop to i <= len(a) and you get panic: index out of range. The last index is len(a)-1.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: taking pieces of the slice
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	a := []int{10, 20, 30, 40, 50}
+
+	fmt.Println(a[1:3])
+	fmt.Println(a[:3])
+	fmt.Println(a[2:])
+	fmt.Println(a[:])
+	fmt.Println(a[2:2], len(a[2:2]))
+}
+
+OUTPUT:
+[20 30]
+[10 20 30]
+[30 40 50]
+[10 20 30 40 50]
+[] 0
+
+a[1:3] gives two elements, not three: the right bound is excluded. A piece's length is always end - start. Break it: write a[1:9] and read slice bounds out of range.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: the slicing became a plain assignment
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	a := []int{10, 20, 30}
+
+	b := a
+	b[0] = 99
+	fmt.Println(a, b)
+
+	c := make([]int, len(a))
+	copy(c, a)
+	c[0] = 7
+	fmt.Println(a, c)
+}
+
+OUTPUT:
+[99 20 30] [99 20 30]
+[99 20 30] [7 20 30]
+
+You edited b and a changed too — the data is shared. Not so for c: make allocated its own block and copy moved the values in. Break it: replace make([]int, len(a)) with var c []int — zero elements get copied and Go won't complain.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: the slice went into a function
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func setFirst(s []int) {
+	s[0] = 99
+}
+
+func main() {
+	a := []int{10, 20, 30}
+	setFirst(a)
+	fmt.Println(a, len(a))
+}
+
+OUTPUT:
+[99 20 30] 3
+
+The function returns nothing, yet a changed on the outside. The header was copied, but it points at the same memory block — a write by index is visible to everyone.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: inside the function, append instead of an index write
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func addItem(s []int) {
+	s = append(s, 99)
+	fmt.Println(s, len(s))
+}
+
+func main() {
+	a := []int{10, 20, 30}
+	addItem(a)
+	fmt.Println(a, len(a))
+}
+
+OUTPUT:
+[10 20 30 99] 4
+[10 20 30] 3
+
+Four elements inside, three outside. append changed the length of the header copy, and that copy stayed in the function. Compare with the previous example — nearly the same code, opposite behaviour. Fix it: return the result and assign it outside.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

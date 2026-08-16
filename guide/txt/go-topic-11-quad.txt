@@ -1,0 +1,456 @@
+==============================================================================
+GO FROM ZERO · TOPIC 11 — THE QUAD PROJECT
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#11-quad
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir quad
+    cd quad
+    go mod init quad
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 6
+	y := 3
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			fmt.Print("*")
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+******
+******
+******
+
+The bare skeleton: two loops and one fmt.Print. The outer loop owns the rows, the inner one the characters inside a row, and fmt.Println() closes the line.
+Break it: move fmt.Println() inside the inner loop and see what the rectangle turns into.
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the cell now asks “edge or middle”
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 6
+	y := 3
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 || row == y || col == 1 || col == x {
+				fmt.Print("*")
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+******
+*    *
+******
+
+Same loops, one condition added. Four facts joined by || cover the whole border at once: first row, last row, first column, last column.
+Break it: swap || for && and explain why only the corners are left.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: top and bottom split off from the sides
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 6
+	y := 4
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 || row == y {
+				fmt.Print("-")
+			} else if col == 1 || col == x {
+				fmt.Print("|")
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+------
+|    |
+|    |
+------
+
+One condition split in two: ask about the row first, about the column second. Order matters — the else if reaches the columns only when the row is not an edge one.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: the edges got their corners
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 6
+	y := 4
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 || row == y {
+				if col == 1 || col == x {
+					fmt.Print("o")
+				} else {
+					fmt.Print("-")
+				}
+			} else {
+				if col == 1 || col == x {
+					fmt.Print("|")
+				} else {
+					fmt.Print(" ")
+				}
+			}
+		}
+		fmt.Println()
+	}
+}
+
+OUTPUT:
+o----o
+|    |
+|    |
+o----o
+
+A complete frame. The conditions nest: the outer asks about the row, the inner about the column. A corner is the only place where both answers are "edge".
+Break it: swap "o" and "-" and see which part of the picture shifts.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: the code moved into a function, a size check appeared
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func quad(x, y int) {
+	if x <= 0 || y <= 0 {
+		return
+	}
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 || row == y {
+				if col == 1 || col == x {
+					fmt.Print("o")
+				} else {
+					fmt.Print("-")
+				}
+			} else {
+				if col == 1 || col == x {
+					fmt.Print("|")
+				} else {
+					fmt.Print(" ")
+				}
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	quad(5, 3)
+	quad(0, 4)
+	quad(3, -2)
+	quad(1, 1)
+	quad(2, 2)
+}
+
+OUTPUT:
+o---o
+|   |
+o---o
+o
+oo
+oo
+
+Five calls in a row. Two are cut off by the check and print nothing, the other three work. Look at quad(1, 1) and quad(2, 2): there the first row is also the last and the first column is also the last, so the whole shape is corners.
+Break it: remove the check and see what quad(0, 4) prints.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: the characters became parameters — one function instead of five
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func quad(x, y int, corner, hor, ver string) {
+	if x <= 0 || y <= 0 {
+		return
+	}
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 || row == y {
+				if col == 1 || col == x {
+					fmt.Print(corner)
+				} else {
+					fmt.Print(hor)
+				}
+			} else {
+				if col == 1 || col == x {
+					fmt.Print(ver)
+				} else {
+					fmt.Print(" ")
+				}
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	quad(5, 3, "o", "-", "|")
+	quad(5, 3, "A", "B", "B")
+}
+
+OUTPUT:
+o---o
+|   |
+o---o
+ABBBA
+B   B
+ABBBA
+
+The logic did not change by a single line — only where the characters come from. One function now draws any shape if you hand it the right marks.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: the top and bottom corners became different
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func quad(x, y int, tl, tr, bl, br, hor, ver string) {
+	if x <= 0 || y <= 0 {
+		return
+	}
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 && col == 1 {
+				fmt.Print(tl)
+			} else if row == 1 && col == x {
+				fmt.Print(tr)
+			} else if row == y && col == 1 {
+				fmt.Print(bl)
+			} else if row == y && col == x {
+				fmt.Print(br)
+			} else if row == 1 || row == y {
+				fmt.Print(hor)
+			} else if col == 1 || col == x {
+				fmt.Print(ver)
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	quad(5, 3, "A", "A", "C", "C", "B", "B")
+}
+
+OUTPUT:
+ABBBA
+B   B
+CBBBC
+
+This is quadC. The corners diverged, so the "edge or middle" question had to be split into four separate checks, one per corner. The order now matters: corners are asked before the sides.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: the same function draws a different shape
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func quad(x, y int, tl, tr, bl, br, hor, ver string) {
+	if x <= 0 || y <= 0 {
+		return
+	}
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 && col == 1 {
+				fmt.Print(tl)
+			} else if row == 1 && col == x {
+				fmt.Print(tr)
+			} else if row == y && col == 1 {
+				fmt.Print(bl)
+			} else if row == y && col == x {
+				fmt.Print(br)
+			} else if row == 1 || row == y {
+				fmt.Print(hor)
+			} else if col == 1 || col == x {
+				fmt.Print(ver)
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	quad(3, 3, "o", "o", "o", "o", "-", "|")
+	quad(3, 3, "/", "\\", "\\", "/", "*", "*")
+}
+
+OUTPUT:
+o-o
+| |
+o-o
+/*\
+* *
+\*/
+
+Two calls, two different shapes, one and the same code. The whole difference between the five variants is six string arguments.
+Break it: swap two arguments and see which corner moves.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: the sizes shrank to one
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func quad(x, y int, tl, tr, bl, br, hor, ver string) {
+	if x <= 0 || y <= 0 {
+		return
+	}
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			if row == 1 && col == 1 {
+				fmt.Print(tl)
+			} else if row == 1 && col == x {
+				fmt.Print(tr)
+			} else if row == y && col == 1 {
+				fmt.Print(bl)
+			} else if row == y && col == x {
+				fmt.Print(br)
+			} else if row == 1 || row == y {
+				fmt.Print(hor)
+			} else if col == 1 || col == x {
+				fmt.Print(ver)
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	quad(4, 1, "A", "C", "E", "G", "-", "|")
+	quad(1, 4, "A", "C", "E", "G", "-", "|")
+	quad(1, 1, "A", "C", "E", "G", "-", "|")
+}
+
+OUTPUT:
+A--C
+A
+|
+|
+E
+A
+
+Look closely. At height 1 the row is both the first and the last — the check written higher wins, so the bottom corners never appear. At width 1 the same happens with columns. And at 1 by 1 a single character remains — the top-left corner.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: we counted how many times the body ran
+------------------------------------------------------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	x := 5
+	y := 3
+	count := 0
+	for row := 1; row <= y; row++ {
+		for col := 1; col <= x; col++ {
+			count++
+			if row == 1 || row == y {
+				if col == 1 || col == x {
+					fmt.Print("o")
+				} else {
+					fmt.Print("-")
+				}
+			} else {
+				if col == 1 || col == x {
+					fmt.Print("|")
+				} else {
+					fmt.Print(" ")
+				}
+			}
+		}
+		fmt.Println()
+	}
+	fmt.Println(count)
+}
+
+OUTPUT:
+o---o
+|   |
+o---o
+15
+
+Fifteen is 5 times 3, that is every cell of the field. The inner loop runs afresh for every row, so the body fires as many times as there are cells.
+Break it: move count := 0 inside the outer loop and see what gets printed.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================

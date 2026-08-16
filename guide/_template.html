@@ -1,0 +1,1307 @@
+<title>Go с нуля — курс из 13 тем</title>
+<style>
+:root{
+  --ground:#FBFCFD; --surface:#FFFFFF; --surface2:#F1F5F7; --surface3:#E7EEF2;
+  --text:#16212B; --muted:#5A6B78; --border:#DDE5EA; --border-strong:#C3D0D8;
+  --accent:#067C8F; --accent-soft:#E0F2F5; --accent-ink:#04606F; --on-accent:#FFFFFF;
+  --warn:#B8461E; --warn-soft:#FBEAE3;
+  --ok:#2E7D4F; --ok-soft:#E4F2EA;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1418; --surface:#151D23; --surface2:#1B252C; --surface3:#233039;
+    --text:#E4EDF2; --muted:#93A5B1; --border:#27343D; --border-strong:#3A4A56;
+    --accent:#3FC3DC; --accent-soft:#0F2C33; --accent-ink:#7FD9EC; --on-accent:#06222A;
+    --warn:#FF9268; --warn-soft:#2E1A12;
+    --ok:#5FD08B; --ok-soft:#12261B;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1418; --surface:#151D23; --surface2:#1B252C; --surface3:#233039;
+  --text:#E4EDF2; --muted:#93A5B1; --border:#27343D; --border-strong:#3A4A56;
+  --accent:#3FC3DC; --accent-soft:#0F2C33; --accent-ink:#7FD9EC; --on-accent:#06222A;
+  --warn:#FF9268; --warn-soft:#2E1A12;
+  --ok:#5FD08B; --ok-soft:#12261B;
+}
+
+*{box-sizing:border-box}
+html:lang(en) [data-l="ru"], html:lang(ru) [data-l="en"]{display:none}
+body{
+  margin:0; background:var(--ground); color:var(--text);
+  font-family:var(--sans); font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1040px; margin:0 auto; padding:0 20px 96px}
+
+header.top{border-bottom:1px solid var(--border); background:var(--surface); padding:22px 0 0}
+.top-inner{max-width:1040px; margin:0 auto; padding:0 20px}
+.toprow{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap}
+.toprow .grow{flex:1; min-width:240px}
+.switches{display:flex; gap:8px; align-items:center; padding-top:4px}
+.sw{
+  font-family:var(--mono); font-size:12px; cursor:pointer;
+  background:var(--surface2); color:var(--muted);
+  border:1px solid var(--border); border-radius:999px; padding:7px 12px;
+  display:inline-flex; align-items:center; gap:7px; line-height:1;
+}
+.sw:hover{color:var(--text); border-color:var(--border-strong)}
+.sw b{font-weight:600; color:var(--text)}
+.sw .ico{font-size:14px; line-height:1}
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 10px;
+}
+h1{
+  font-family:var(--mono); font-size:clamp(27px,4.4vw,42px); line-height:1.1;
+  letter-spacing:-.02em; margin:0 0 12px; text-wrap:balance; font-weight:600;
+}
+.lede{font-size:17px; color:var(--muted); max-width:62ch; margin:0 0 24px}
+
+nav.tabs{display:flex; gap:2px; flex-wrap:wrap; margin-bottom:-1px}
+nav.tabs button{
+  font-family:var(--mono); font-size:13px; background:transparent; color:var(--muted);
+  border:1px solid transparent; border-bottom:none; padding:11px 15px; cursor:pointer;
+  border-radius:8px 8px 0 0; display:flex; align-items:center; gap:8px;
+}
+nav.tabs button .num{font-size:11px; color:var(--border-strong); font-variant-numeric:tabular-nums}
+nav.tabs button:hover{color:var(--text); background:var(--surface2)}
+nav.tabs button[aria-selected="true"]{
+  background:var(--ground); color:var(--text); border-color:var(--border); font-weight:600;
+}
+nav.tabs button[aria-selected="true"] .num{color:var(--accent)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+section[role="tabpanel"]{padding-top:40px}
+section[hidden]{display:none}
+
+h2{font-family:var(--mono); font-size:23px; letter-spacing:-.01em; font-weight:600; margin:44px 0 14px; text-wrap:balance}
+h2:first-child{margin-top:0}
+h3{font-family:var(--mono); font-size:17px; font-weight:600; margin:28px 0 10px}
+p{margin:0 0 14px; max-width:70ch}
+ul,ol{max-width:70ch; padding-left:22px; margin:0 0 16px}
+li{margin:0 0 7px}
+a{color:var(--accent); text-underline-offset:3px}
+code{font-family:var(--mono); font-size:.9em; background:var(--surface2); padding:2px 5px; border-radius:4px; border:1px solid var(--border)}
+pre{
+  font-family:var(--mono); font-size:13.5px; line-height:1.7; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px; padding:16px 18px; overflow-x:auto; margin:0 0 18px;
+}
+pre code{background:none; border:none; padding:0; font-size:inherit}
+.cm{color:var(--muted)}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px; margin:0 0 18px}
+.card>*:last-child{margin-bottom:0}
+.note{border-left:3px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 8px 8px 0; margin:0 0 18px}
+.note.trap{border-left-color:var(--warn); background:var(--warn-soft)}
+.note>*:last-child{margin-bottom:0}
+.note .tag{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:6px}
+.note.trap .tag{color:var(--warn)}
+
+.rule{display:grid; grid-template-columns:auto 1fr; gap:0 18px; padding:20px 0; border-top:1px solid var(--border)}
+.rule:last-of-type{border-bottom:1px solid var(--border)}
+.rule .n{font-family:var(--mono); font-size:26px; font-weight:600; color:var(--accent); line-height:1.2; font-variant-numeric:tabular-nums}
+.rule .body>*:last-child{margin-bottom:0}
+.rule .body h3{margin:0 0 8px}
+
+.tablewrap{overflow-x:auto; margin:0 0 18px}
+table{width:100%; border-collapse:collapse; font-size:14.5px; min-width:460px}
+th{text-align:left; font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:0 14px 9px 0; border-bottom:1px solid var(--border-strong)}
+td{padding:10px 14px 10px 0; border-bottom:1px solid var(--border); vertical-align:top}
+td code{font-size:13px}
+
+.links{display:grid; gap:10px; margin:0 0 20px}
+.link{display:flex; gap:14px; align-items:baseline; padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--surface); text-decoration:none; color:var(--text)}
+.link:hover{border-color:var(--accent); background:var(--accent-soft)}
+.link .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); white-space:nowrap; min-width:96px}
+.link .t{font-weight:600}
+.link .d{color:var(--muted); font-size:14px; display:block; font-weight:400}
+.link.pending{opacity:.55; pointer-events:none; border-style:dashed}
+
+button.btn{font-family:var(--mono); font-size:13px; font-weight:600; cursor:pointer; background:var(--accent); color:var(--on-accent); border:1px solid var(--accent); border-radius:8px; padding:9px 17px}
+button.btn:hover{background:var(--accent-ink); border-color:var(--accent-ink)}
+button.btn.ghost{background:transparent; color:var(--text); border-color:var(--border-strong)}
+button.btn.ghost:hover{background:var(--surface2); border-color:var(--accent); color:var(--accent)}
+button.btn:disabled{opacity:.4; cursor:not-allowed}
+
+/* тренажёр */
+.sim-modes{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px}
+.sim-modes button{font-family:var(--mono); font-size:12.5px; padding:8px 13px; cursor:pointer; background:var(--surface); color:var(--muted); border:1px solid var(--border); border-radius:999px}
+.sim-modes button:hover{color:var(--text); border-color:var(--border-strong)}
+.sim-modes button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600}
+.sim{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:18px}
+@media(max-width:860px){.sim{grid-template-columns:1fr}}
+.sim-code{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 0; overflow-x:auto}
+.sim-code .ln{font-family:var(--mono); font-size:13.5px; line-height:1.75; white-space:pre; padding:1px 18px 1px 52px; position:relative}
+.sim-code .ln::before{content:attr(data-n); position:absolute; left:0; width:38px; text-align:right; color:var(--border-strong); font-size:11.5px}
+.sim-code .ln.active{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.sim-side{display:flex; flex-direction:column; gap:14px; min-width:0}
+.panel{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; min-width:0}
+.panel h4{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 10px; font-weight:600}
+.vars{display:grid; gap:7px; font-family:var(--mono); font-size:13px}
+.var{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:baseline}
+.var .vn{color:var(--accent); font-weight:600}
+.var .vv{overflow-wrap:anywhere}
+.var .vt{color:var(--muted); font-size:11.5px}
+.out{font-family:var(--mono); font-size:13px; white-space:pre-wrap; min-height:2.4em; overflow-wrap:anywhere}
+.out:empty::after{content:"—"; color:var(--border-strong)}
+.explain{font-size:14.5px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 16px}
+.tape{display:flex; flex-wrap:wrap; gap:3px; font-family:var(--mono); font-size:11px}
+.tape .b{min-width:30px; text-align:center; padding:5px 3px; border-radius:5px; background:var(--surface2); border:1px solid var(--border); color:var(--muted)}
+.tape .b .bi{display:block; font-size:9.5px; color:var(--border-strong)}
+.tape .b.on{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.tape .b.on .bi{color:var(--on-accent); opacity:.7}
+.sim-code .ln.prev{background:var(--surface2)}
+.var{transition:background .25s}
+.var.changed,.var.isnew{
+  background:var(--accent-soft); border-radius:6px;
+  margin:-3px -8px; padding:3px 8px;
+}
+.var.changed .vv{color:var(--accent); font-weight:600}
+.var.isnew .vn::before{content:"+ "; color:var(--ok)}
+.out mark{background:var(--accent-soft); color:var(--accent); font-weight:600; border-radius:3px; padding:0 2px}
+
+.stack{display:flex; flex-direction:column; gap:4px; font-family:var(--mono); font-size:12.5px}
+.frame{
+  padding:5px 10px; border:1px solid var(--border); border-radius:6px;
+  background:var(--surface2); color:var(--muted); white-space:nowrap;
+}
+.frame.top{background:var(--accent-soft); border-color:var(--accent); color:var(--text); font-weight:600}
+
+.cells{display:flex; flex-wrap:wrap; gap:4px; font-family:var(--mono); font-size:12.5px}
+.cell{
+  min-width:38px; text-align:center; padding:6px 4px 3px; border-radius:6px;
+  background:var(--surface2); border:1px solid var(--border);
+}
+.cell .ci{display:block; font-size:9.5px; color:var(--border-strong); margin-top:2px}
+.cell.on{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.cell.on .ci{color:var(--on-accent); opacity:.7}
+
+.sim-params{
+  display:flex; flex-wrap:wrap; align-items:center; gap:14px;
+  padding:12px 16px; margin:0 0 16px; background:var(--surface2);
+  border:1px solid var(--border); border-radius:10px;
+}
+.sim-params .pl{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent)}
+.pfield{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.pfield input[type=range]{width:110px; accent-color:var(--accent)}
+.pfield .pv{color:var(--text); font-weight:600; min-width:18px; font-variant-numeric:tabular-nums}
+.pfield input[type=text],.pfield select{
+  font-family:var(--mono); font-size:13px; padding:5px 8px; color:var(--text);
+  background:var(--ground); border:1px solid var(--border-strong); border-radius:6px;
+}
+
+.speed{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; color:var(--muted)}
+.speed input{width:96px; accent-color:var(--accent)}
+
+.simbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:16px 0 0}
+.progress{flex:1; min-width:120px; height:5px; border-radius:3px; background:var(--surface3); overflow:hidden}
+.progress i{display:block; height:100%; background:var(--accent); width:0; transition:width .18s}
+.step-label{font-family:var(--mono); font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+
+/* примеры */
+.ex{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:20px 22px; margin:0 0 14px}
+.ex .head{display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; margin:0 0 10px}
+.ex .num{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--on-accent); background:var(--accent); border-radius:5px; padding:2px 8px}
+.ex .chg{font-size:14.5px; color:var(--muted)}
+.ex pre{background:var(--surface2); margin:0 0 12px}
+.ex .outlabel{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px}
+.ex .why{font-size:14.5px; background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:12px 15px; margin:12px 0 0}
+.spoiler{border:1px dashed var(--border-strong); border-radius:9px; padding:12px 15px; margin:0 0 12px; background:var(--ground)}
+.spoiler[data-open="1"]{border-style:solid}
+
+/* тест */
+.quizbar{display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin:0 0 22px}
+.quizbar .grow{flex:1}
+.score{font-family:var(--mono); font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+.score b{color:var(--text)}
+.timer{font-family:var(--mono); font-size:13px; font-variant-numeric:tabular-nums; color:var(--muted); padding:5px 10px; border:1px solid var(--border); border-radius:999px}
+.timer.run{color:var(--accent); border-color:var(--accent)}
+.q{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin:0 0 14px}
+.q .qn{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 8px}
+.q .qt{font-weight:600; margin:0 0 12px; max-width:70ch}
+.q pre{margin:0 0 14px; background:var(--surface2)}
+.opts{display:grid; gap:8px}
+.opt{display:flex; gap:12px; align-items:flex-start; text-align:left; width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:9px; background:var(--ground); color:var(--text); cursor:pointer; font-family:var(--sans); font-size:15px; line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--accent); background:var(--accent-soft)}
+.opt .letter{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--muted); border:1px solid var(--border-strong); border-radius:5px; min-width:22px; height:22px; display:grid; place-items:center; flex-shrink:0; margin-top:1px}
+.opt code{background:var(--surface2)}
+.opt.correct{border-color:var(--ok); background:var(--ok-soft)}
+.opt.correct .letter{border-color:var(--ok); color:var(--ok)}
+.opt.wrong{border-color:var(--warn); background:var(--warn-soft)}
+.opt.wrong .letter{border-color:var(--warn); color:var(--warn)}
+.opt:disabled{cursor:default}
+.why{margin:14px 0 0; padding:13px 16px; border-radius:9px; background:var(--surface2); border:1px solid var(--border); font-size:14.5px}
+.why b{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase}
+.why.good b{color:var(--ok)}
+.why.bad b{color:var(--warn)}
+.why p{margin:6px 0 0}
+.result{background:var(--surface); border:1px solid var(--border-strong); border-radius:12px; padding:24px; margin:0 0 20px; display:none}
+.result.show{display:block}
+.result .big{font-family:var(--mono); font-size:38px; font-weight:600; line-height:1; margin:0 0 6px; font-variant-numeric:tabular-nums}
+
+.secnote{color:var(--muted); font-size:14.5px; margin:0 0 14px}
+details.rsec{border:1px solid var(--border); border-radius:10px; background:var(--surface); margin:0 0 10px}
+details.rsec>summary{cursor:pointer; padding:16px 18px; list-style:none; display:flex; gap:12px; align-items:baseline}
+details.rsec>summary::-webkit-details-marker{display:none}
+details.rsec>summary::before{content:"+"; font-family:var(--mono); color:var(--accent); font-size:17px; line-height:1.3; flex-shrink:0}
+details.rsec[open]>summary::before{content:"–"}
+details.rsec .rt{flex:1; font-family:var(--mono); font-size:16px; font-weight:600}
+details.rsec .rc{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+details.rsec .rsecbody{padding:0 20px 10px}
+details.rsec .secintro{background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:15px 17px; margin:0 0 4px}
+details.rsec .secintro>*:last-child{margin-bottom:0}
+details.rsec .secintro pre{background:var(--surface); margin-bottom:0}
+details.rsec .rule:first-of-type{border-top:none}
+
+details.qa{border:1px solid var(--border); border-radius:10px; background:var(--surface); margin:0 0 10px}
+details.qa summary{cursor:pointer; padding:15px 18px; font-weight:600; list-style:none; display:flex; gap:12px; align-items:flex-start}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary::before{content:"+"; font-family:var(--mono); color:var(--accent); font-size:17px; line-height:1.35; flex-shrink:0}
+details.qa[open] summary::before{content:"–"}
+details.qa .qabody{padding:0 18px 18px 44px}
+details.qa .qabody>*:last-child{margin-bottom:0}
+
+.task{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:20px 22px; margin:0 0 14px}
+.task .head{display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; margin:0 0 10px}
+.task .num{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--on-accent); background:var(--accent); border-radius:5px; padding:2px 8px}
+.task .title{font-weight:650; font-size:17px; font-family:var(--mono)}
+.task .lvl{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); border-radius:999px; padding:2px 9px}
+.task .lvl[data-l="2"]{color:var(--accent); border-color:var(--accent)}
+.task .lvl[data-l="3"]{color:var(--warn); border-color:var(--warn)}
+.hintbox{margin:12px 0 0; padding:12px 15px; background:var(--surface2); border:1px dashed var(--border-strong); border-radius:9px; font-size:14.5px}
+
+/* главный экран */
+.topics{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px}
+.topic{
+  display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline;
+  text-align:left; padding:18px 20px; border:1px solid var(--border); border-radius:12px;
+  background:var(--surface); color:var(--text); cursor:pointer; font-family:var(--sans);
+}
+.topic:hover{border-color:var(--accent); background:var(--accent-soft)}
+.topic .tn{
+  grid-row:span 2; font-family:var(--mono); font-size:20px; font-weight:600; color:var(--accent);
+  font-variant-numeric:tabular-nums; line-height:1.2;
+}
+.topic .tt{font-family:var(--mono); font-size:17px; font-weight:600; line-height:1.3}
+.topic .td{font-size:14px; color:var(--muted); line-height:1.5}
+.topic .td code{font-size:12.5px; background:var(--surface2)}
+
+.lesson{font-size:16.5px}
+.lesson p{margin:0 0 15px}
+.lesson h3{margin:26px 0 10px}
+.lesson .step{
+  display:block; font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent); margin:26px 0 6px;
+}
+.lesson blockquote{
+  margin:0 0 16px; padding:2px 0 2px 16px; border-left:2px solid var(--border-strong);
+  color:var(--muted);
+}
+
+.dlrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 18px}
+.txtbox{width:100%; min-height:340px; font-family:var(--mono); font-size:12px; line-height:1.6; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:14px; white-space:pre; overflow:auto}
+
+footer.foot{border-top:1px solid var(--border); margin-top:56px; padding-top:22px; font-size:13.5px; color:var(--muted); font-family:var(--mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none !important; scroll-behavior:auto !important}}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="toprow">
+      <div class="grow">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 id="pageTitle"></h1>
+      </div>
+      <div class="switches">
+        <button class="sw" id="homeBtn" type="button" hidden><span class="ico">←</span><b id="homeLabel"></b></button>
+        <button class="sw" id="langBtn" type="button"><span class="ico">🌐</span><b id="langLabel">EN</b></button>
+        <button class="sw" id="themeBtn" type="button"><span class="ico" id="themeIco">🌙</span><b id="themeLabel"></b></button>
+      </div>
+    </div>
+    <p class="lede" id="pageLede"></p>
+    <nav class="tabs" role="tablist" id="tablist"></nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <section role="tabpanel" id="p1"></section>
+  <section role="tabpanel" id="p2" hidden></section>
+  <section role="tabpanel" id="p3" hidden></section>
+  <section role="tabpanel" id="p4" hidden></section>
+  <section role="tabpanel" id="p5" hidden></section>
+  <section role="tabpanel" id="p6" hidden></section>
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+"use strict";
+var LANG = "ru";
+
+/* ================= ИНТЕРФЕЙС ================= */
+var UI = {
+  tabs:[
+    {ru:"Тема",     en:"Topic"},
+    {ru:"Тренажёр", en:"Simulator"},
+    {ru:"Практика", en:"Practice"},
+    {ru:"Тест",     en:"Quiz"},
+    {ru:"Вопросы",  en:"Q&A"}
+  ],
+  theme:   {ru:"Тема", en:"Theme"},
+  dark:    {ru:"Тёмная", en:"Dark"},
+  light:   {ru:"Светлая", en:"Light"},
+  step:    {ru:"Шаг →", en:"Step →"},
+  back:    {ru:"← Назад", en:"← Back"},
+  restart: {ru:"Сначала", en:"Restart"},
+  notRun:  {ru:"программа ещё не запущена", en:"program has not started"},
+  simHint: {ru:"Нажми «Шаг». Перед каждым нажатием предположи, что произойдёт.",
+            en:"Press “Step”. Before each press, predict what will happen."},
+  vars:    {ru:"Переменные", en:"Variables"},
+  callstack:{ru:"Башня вызовов", en:"Call stack"},
+  cells:   {ru:"Ячейки", en:"Cells"},
+  play:    {ru:"▶ Пуск", en:"▶ Play"},
+  pause:   {ru:"❚❚ Пауза", en:"❚❚ Pause"},
+  speed:   {ru:"Скорость", en:"Speed"},
+  tryYourself:{ru:"Поменяй и посмотри:", en:"Change it and watch:"},
+  bytes:   {ru:"Байты строки", en:"String bytes"},
+  output:  {ru:"Вывод программы", en:"Program output"},
+  shuffle: {ru:"Перемешать заново", en:"Shuffle again"},
+  timerOn: {ru:"Таймер: вкл", en:"Timer: on"},
+  timerOff:{ru:"Таймер: выкл", en:"Timer: off"},
+  answered:{ru:"Отвечено", en:"Answered"},
+  of:      {ru:"из", en:"of"},
+  right:   {ru:"верно", en:"correct"},
+  correct: {ru:"Верно", en:"Correct"},
+  wrong:   {ru:"Неверно", en:"Wrong"},
+  expected:{ru:"Что должно вывестись", en:"Expected output"},
+  showHint:{ru:"Показать подсказку", en:"Show hint"},
+  hideHint:{ru:"Скрыть подсказку", en:"Hide hint"},
+  changed: {ru:"Изменилось:", en:"What changed:"},
+  showOut: {ru:"Показать вывод", en:"Show output"},
+  hideOut: {ru:"Скрыть вывод", en:"Hide output"},
+  guessIt: {ru:"Сначала напиши на бумаге, что выведется. Потом открой.",
+            en:"Write down what it will print. Then open."},
+  allTopics:{ru:"Все темы", en:"All topics"},
+  courseEyebrow:{ru:"Курс из 13 тем · для тех, кто начинает с нуля", en:"A 13-topic course · for absolute beginners"},
+  courseTitle:{ru:"Go с нуля", en:"Go from zero"},
+  courseLede:{ru:"Десять тем по основам языка и три разбора законченных проектов. В каждой: связный разбор, пошаговый тренажёр, десять примеров для набора руками, десять задач и тест.",
+              en:"Ten topics on the language basics and three finished projects taken apart. Each has an explanation, a step-by-step simulator, ten examples to type by hand, ten tasks and a quiz."},
+  orderTitle:{ru:"С чего начать", en:"Where to start"},
+  orderText:{ru:"<p>Если совсем с нуля — иди по порядку, темы опираются одна на другую. Если что-то уже писал — открой любую тему и сразу пройди её тест: за пять минут будет видно, нужна она тебе или можно дальше.</p><p>Не пытайся пройти всё подряд за раз. Одна тема за подход, между подходами — перерыв.</p>",
+             en:"<p>Starting from zero — go in order, each topic builds on the previous. If you have written some code already, open any topic and take its quiz first: five minutes tells you whether you need it.</p><p>Don't try to do everything at once. One topic per session, with breaks in between.</p>"},
+  download:{ru:"Скачать .txt", en:"Download .txt"},
+  saving:  {ru:"Сохраняю…", en:"Saving…"},
+  saved:   {ru:"Сохранено ✓", en:"Saved ✓"},
+  copyTxt: {ru:"Копировать всё", en:"Copy everything"},
+  copied:  {ru:"Скопировано ✓", en:"Copied ✓"},
+  showTxt: {ru:"Показать текстом", en:"Show as text"},
+  hideTxt: {ru:"Скрыть", en:"Hide"},
+  dlNote:  {ru:"Весь материал темы одним куском: правила, десять примеров с выводом и десять задач. Скопируй и сохрани у себя как .txt — так он будет под рукой без интернета.",
+            en:"The whole topic in one piece: rules, ten examples with output, ten tasks. Copy it and save it as a .txt of your own — then you have it offline."},
+  levels:  {1:{ru:"просто",en:"easy"}, 2:{ru:"средне",en:"medium"}, 3:{ru:"сложно",en:"hard"}}
+};
+
+/* ================= КАК ЗАНИМАТЬСЯ ================= */
+var HOWTO = {
+ru:`<h2>Как заниматься</h2>
+
+<p>Долго сидеть не нужно. Короткими подходами получается быстрее, чем одним длинным заходом.</p>
+
+<div class="card">
+<h3>Ритм</h3>
+<p><strong>25 минут набираешь код руками → 10 минут смотришь видео или тренируешь слепую печать → снова код.</strong></p>
+<p>Перерыв здесь не потеря времени. Пока отвлекаешься, прочитанное укладывается само. Важно только, чтобы отвлечение было полезным: видео по теме или тренажёр печати, а не лента.</p>
+</div>
+
+<div class="note">
+<span class="tag">Главное</span>
+<p><strong>Практика — это набор кода руками.</strong> Не чтение и не просмотр. Читать можно бесконечно и не сдвинуться с места; печатать десять минут — уже движение.</p>
+<p>Не копируй код мышкой. Пока печатаешь, глаз замечает скобки, точки и кавычки, которые при копировании проходят мимо.</p>
+<p>И перед каждым запуском пиши на бумаге, что программа выведет. Пример, где предсказание не совпало, — самый ценный: ровно там находится то, чего ты пока не знаешь.</p>
+</div>
+
+<h3>Что делать внутри темы</h3>
+<ul>
+<li><strong>Не знаешь, с чего начать</strong> → «Тема»: правила, перепиши их от руки.</li>
+<li><strong>Хочешь понять, где дыры</strong> → «Тест». Логично пройти даже первым: за пять минут покажет, чего ты не знаешь.</li>
+<li><strong>Что-то не сходится</strong> → «Тренажёр»: код идёт по строке, видно что лежит в переменных.</li>
+<li><strong>Правила понятны</strong> → «Практика»: набирай примеры руками, дальше там же задачи.</li>
+<li><strong>Возник вопрос «а почему так»</strong> → «Вопросы».</li>
+</ul>
+
+<h3>Ломай примеры специально</h3>
+<p>Набрал пример, он заработал — не переходи сразу к следующему. Сломай его нарочно: убери кавычки, поменяй тип, поставь другой индекс. Прочитай, что скажет компилятор. Так ты за минуту узнаёшь то, что иначе всплывёт через неделю в собственном коде и будет непонятно.</p>
+
+<h3>Повторяй по графику</h3>
+<p>Мозг выбрасывает то, чем не пользуются. Чтобы тема осталась, вернись к ней <strong>на следующий день, потом через три дня, через неделю, через две</strong>. Повторять надо не чтение, а действие: перенабрать пару примеров и заново пройти тест.</p>
+
+<h3>Как понять, что двигаешься</h3>
+<p>Не по числу пройденных тем — этот счёт обманывает. Считай <strong>ошибки, которые научился чинить сам</strong>: увидел текст ошибки, понял причину, исправил без подсказки. Растёт это число — растёшь ты.</p>`,
+
+en:`<h2>How to study</h2>
+
+<p>You don't need long sessions. Short bursts work better than one long sitting.</p>
+
+<div class="card">
+<h3>The rhythm</h3>
+<p><strong>25 minutes typing code by hand → 10 minutes of video or touch-typing practice → back to code.</strong></p>
+<p>The break is not wasted time — what you read settles while you are away. Just keep the break useful: a video on the topic or the typing trainer, not a feed.</p>
+</div>
+
+<div class="note">
+<span class="tag">The main thing</span>
+<p><strong>Practice means typing code by hand.</strong> Not reading, not watching. You can read forever and stay where you are; ten minutes of typing already moves you.</p>
+<p>Don't copy-paste. While you type, your eye catches the brackets, dots and quotes that copying slides right past.</p>
+<p>And before every run, write down what the program will print. The example where your guess was wrong is the valuable one — that is exactly where the thing you don't know is hiding.</p>
+</div>
+
+<h3>What to do inside a topic</h3>
+<ul>
+<li><strong>No idea where to begin</strong> → “Topic”: the rules, copy them out by hand.</li>
+<li><strong>Want to find your gaps</strong> → “Quiz”. Taking it first makes sense: five minutes and you know what you don't know.</li>
+<li><strong>Something doesn't add up</strong> → “Simulator”: the code runs line by line and you see what the variables hold.</li>
+<li><strong>Rules are clear</strong> → “Practice”: type the examples by hand, the tasks follow below.</li>
+<li><strong>A “but why” question came up</strong> → “Q&A”.</li>
+</ul>
+
+<h3>Break the examples on purpose</h3>
+<p>An example works — don't move on yet. Break it deliberately: drop the quotes, change the type, use a different index. Read what the compiler says. One minute here saves you a week later, when the same error shows up in your own code and makes no sense.</p>
+
+<h3>Repeat on a schedule</h3>
+<p>The brain discards what it doesn't use. To keep a topic, come back to it <strong>the next day, then after three days, after a week, after two</strong>. Repeat the doing, not the reading: retype a couple of examples and take the quiz again.</p>
+
+<h3>How to tell you're moving</h3>
+<p>Not by the number of topics covered — that count lies. Count <strong>the errors you learned to fix yourself</strong>: you read the message, understood the cause, fixed it with no help. When that number grows, so do you.</p>`
+};
+
+/* короткий блок настройки — он свой у каждой темы */
+var SETUP = {
+ru:`<div class="note"><span class="tag">Папка темы</span>
+<p>Каждая тема живёт в своей папке. Набери руками, не копируй:</p>
+<pre style="margin:10px 0 0"><code>mkdir {{folder}}
+cd {{folder}}
+go mod init {{folder}}</code></pre>
+<p style="margin-top:10px">Запуск — <code>go run .</code></p></div>`,
+en:`<div class="note"><span class="tag">Topic folder</span>
+<p>Each topic lives in its own folder. Type it out, don't copy:</p>
+<pre style="margin:10px 0 0"><code>mkdir {{folder}}
+cd {{folder}}
+go mod init {{folder}}</code></pre>
+<p style="margin-top:10px">Run it with <code>go run .</code></p></div>`
+};
+
+/* ================= ССЫЛКИ ================= */
+var LINKS = [
+  {k:{ru:"Печать",en:"Typing"}, url:"https://klava.org/delta/dark.html#eng_adv",
+   t:{ru:"Тренажёр слепой печати", en:"Touch-typing trainer"},
+   d:{ru:"Английская раскладка, режим для продвинутых. Десять минут в день — и код набирается, пока думаешь, а не вместо.",
+      en:"English layout, advanced mode. Ten minutes a day and typing stops competing with thinking."}},
+  {k:{ru:"Метод",en:"Method"}, url:"https://www.youtube.com/watch?v=4Ntz1dPutzs&t=600s",
+   t:{ru:"Почему обучение не идёт", en:"Why learning stalls"},
+   d:{ru:"Про сам процесс, а не про язык: почему просмотр видео не работает, зачем повторять по графику и как мерить прогресс. Посмотреть до того, как начнёшь.",
+      en:"About the process, not the language: why watching videos doesn't work, why spaced repetition matters, how to measure progress. Watch it before you start."}},
+  {k:{ru:"Курс",en:"Course"}, url:"https://www.youtube.com/watch?v=dpvRDJjUJf8",
+   t:{ru:"Большой курс по Go с нуля", en:"Full Go course from scratch"},
+   d:{ru:"Двенадцать часов с самых основ. Ссылку на нужную главу найдёшь внутри каждой темы. Есть продолжение: часть 2 про интерфейсы и горутины, часть 3 про Git и базы данных — обе сильно позже.",
+      en:"Twelve hours from the ground up. A link to the relevant chapter sits inside each topic. There is a sequel: part 2 on interfaces and goroutines, part 3 on Git and databases — both much later."}}
+];
+
+
+
+var TOPICS = [];
+
+__DATA__
+
+/* ================= ОБЩЕЕ ================= */
+function t(v){ return (v && typeof v === "object" && (v.ru || v.en)) ? (v[LANG] || v.ru) : v; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function el(id){ return document.getElementById(id); }
+function store(k, v){ try{ if(v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){} }
+
+/* ---- тема ---- */
+function effectiveTheme(){
+  var set = document.documentElement.getAttribute("data-theme");
+  if(set) return set;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function paintThemeBtn(){
+  var dark = effectiveTheme() === "dark";
+  el("themeIco").textContent = dark ? "☀️" : "🌙";
+  el("themeLabel").textContent = dark ? t(UI.light) : t(UI.dark);
+}
+el("themeBtn").addEventListener("click", function(){
+  var next = effectiveTheme() === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  store("guide-theme", next);
+  paintThemeBtn();
+});
+
+/* ---- язык ---- */
+el("homeBtn").addEventListener("click", goHome);
+
+el("langBtn").addEventListener("click", function(){
+  LANG = (LANG === "ru") ? "en" : "ru";
+  store("guide-lang", LANG);
+  render();
+});
+
+/* ================= РЕНДЕР ================= */
+var activeTab = 0;
+var simCur = 0, simPos = 0, simTimer = null, simSpeed = 900;
+var simParams = {};
+
+/* Сценарий может быть статическим (code и steps — массивы) либо
+   параметрическим: тогда code/steps — функции от значений регуляторов. */
+function scParams(sc){ return sc.params || []; }
+function simDefaults(sc){
+  var p = {};
+  scParams(sc).forEach(function(d){ p[d.key] = (d.def !== undefined ? d.def : d.min); });
+  return p;
+}
+function resolveSc(sc){
+  var p = simParams;
+  return {
+    code:  typeof sc.code  === "function" ? sc.code(p)  : sc.code,
+    steps: typeof sc.steps === "function" ? sc.steps(p) : sc.steps,
+    tape:  typeof sc.tape  === "function" ? sc.tape(p)  : sc.tape
+  };
+}
+var quizSet = [];
+var view = "home";      // "home" — список тем, "topic" — открытая тема
+var topicIdx = 0;
+var D = TOPICS[0] || {};
+
+function openTopic(i){
+  simStop(true);
+  topicIdx = i; D = TOPICS[i];
+  view = "topic"; activeTab = 0; simCur = 0; simPos = 0; quizSet = [];
+  simParams = simDefaults(D.SCENARIOS[0] || {});
+  try{ location.hash = "#" + D.META.slug; }catch(e){}
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function goHome(){
+  view = "home";
+  try{ location.hash = ""; }catch(e){}
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function render(){
+  document.documentElement.setAttribute("lang", LANG);
+  el("langLabel").textContent = (LANG === "ru") ? "EN" : "RU";
+  el("homeLabel").textContent = t(UI.allTopics);
+  paintThemeBtn();
+
+  if(view === "home"){ renderHome(); return; }
+
+  el("homeBtn").hidden = false;
+  el("eyebrow").textContent = t(D.META.eyebrow);
+  el("pageTitle").textContent = t(D.META.title);
+  el("pageLede").innerHTML = t(D.META.lede);
+  el("foot").textContent = t(D.META.eyebrow);
+  document.title = "Go · " + t(D.META.title);
+
+  var nav = el("tablist");
+  nav.innerHTML = "";
+  UI.tabs.forEach(function(tab, i){
+    var b = document.createElement("button");
+    b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i === activeTab ? "true" : "false");
+    b.setAttribute("aria-controls","p"+(i+1));
+    b.innerHTML = '<span class="num">0'+(i+1)+'</span>'+esc(t(tab));
+    b.addEventListener("click", function(){
+      simStop(true);
+      activeTab = i; render();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+    nav.appendChild(b);
+  });
+  for(var i=0;i<5;i++){ el("p"+(i+1)).hidden = (i !== activeTab); }
+  el("p6").hidden = true;
+
+  renderStart();
+  renderSim();
+  renderPractice();
+  renderQuiz(true);
+  renderQA();
+}
+
+/* ---- главный экран: список тем ---- */
+function renderHome(){
+  el("homeBtn").hidden = true;
+  el("tablist").innerHTML = "";
+  el("eyebrow").textContent = t(UI.courseEyebrow);
+  el("pageTitle").textContent = t(UI.courseTitle);
+  el("pageLede").innerHTML = t(UI.courseLede);
+  el("foot").textContent = t(UI.courseEyebrow);
+  document.title = t(UI.courseTitle);
+
+  var h = '<div class="topics">';
+  TOPICS.forEach(function(topic, i){
+    h += '<button class="topic" data-topic="'+i+'" type="button">' +
+         '<span class="tn">'+String(topic.META.n).padStart(2,"0")+'</span>' +
+         '<span class="tt">'+esc(t(topic.META.title))+'</span>' +
+         '<span class="td">'+t(topic.META.lede)+'</span></button>';
+  });
+  h += '</div>';
+
+  h += '<div class="card" style="margin-top:26px"><h3>'+esc(t(UI.orderTitle))+'</h3>' + t(UI.orderText) + '</div>';
+
+  h += t(HOWTO);
+
+  h += '<h2>' + (LANG==="ru" ? "Материалы" : "Materials") + '</h2><div class="links">';
+  LINKS.forEach(function(l){
+    h += '<a class="link" href="'+l.url+'" target="_blank" rel="noopener">' +
+         '<span class="k">'+esc(t(l.k))+'</span><span><span class="t">'+esc(t(l.t))+'</span>' +
+         '<span class="d">'+esc(t(l.d))+'</span></span></a>';
+  });
+  h += '</div>';
+
+  el("p1").innerHTML = h;
+  el("p1").hidden = false;
+  for(var i=2;i<=6;i++){ el("p"+i).hidden = true; }
+
+  Array.prototype.forEach.call(el("p1").querySelectorAll("[data-topic]"), function(b){
+    b.addEventListener("click", function(){ openTopic(+b.getAttribute("data-topic")); });
+  });
+}
+
+/* ---- вкладка 1: начало ---- */
+function renderStart(){
+  var h = t(SETUP).replace(/\{\{folder\}\}/g, D.META.folder);
+
+  if(D.META.video){
+    h += '<a class="link" style="margin:0 0 20px" href="'+D.META.video.url+'" target="_blank" rel="noopener">' +
+         '<span class="k">'+(LANG==="ru"?"Видео":"Video")+'</span><span>' +
+         '<span class="t">'+esc(t(D.META.video.t))+'</span>' +
+         '<span class="d">'+esc(t(D.META.video.d))+'</span></span></a>';
+  }
+
+  if(D.INTRO) h += '<div class="lesson">' + t(D.INTRO) + '</div>';
+
+  h += '<h2>' + (LANG==="ru" ? "Правила по порядку" : "The rules, in order") + '</h2>';
+  var oneRule = function(r, n){
+    return '<div class="rule"><div class="n">'+n+'</div><div class="body"><h3>'+t(r.h)+'</h3>'+t(r.b)+'</div></div>';
+  };
+  var ruleWord = function(n){
+    if(LANG !== "ru") return n === 1 ? "rule" : "rules";
+    var a = n % 10, b = n % 100;
+    if(a === 1 && b !== 11) return "правило";
+    if(a >= 2 && a <= 4 && (b < 12 || b > 14)) return "правила";
+    return "правил";
+  };
+  if(!D.RULES.some(function(r){ return r.sec; })){
+    D.RULES.forEach(function(r, i){ h += oneRule(r, i+1); });
+  } else {
+    var groups = [];
+    D.RULES.forEach(function(r, i){
+      if(r.sec || !groups.length) groups.push({sec:r.sec || null, intro:r.secIntro || null, items:[]});
+      groups[groups.length-1].items.push({r:r, n:i+1});
+    });
+    h += '<p class="secnote">'+(LANG==="ru"
+      ? "Тема собрана из трёх программ. Открывай ту, которая нужна сейчас."
+      : "This topic covers three programs. Open the one you need right now.")+'</p>';
+    groups.forEach(function(g){
+      var inner = "";
+      g.items.forEach(function(it){ inner += oneRule(it.r, it.n); });
+      if(g.sec){
+        h += '<details class="rsec"><summary>' +
+             '<span class="rt">'+esc(t(g.sec))+'</span>' +
+             '<span class="rc">'+g.items.length+" "+ruleWord(g.items.length)+'</span>' +
+             '</summary><div class="rsecbody">' +
+             (g.intro ? '<div class="secintro">'+t(g.intro)+'</div>' : '') +
+             inner+'</div></details>';
+      } else {
+        h += inner;
+      }
+    });
+  }
+
+  if(D.TABLE && D.TABLE.rows && D.TABLE.rows.length){
+    h += '<h2>'+esc(t(D.TABLE.title))+'</h2>';
+    if(D.TABLE.intro) h += '<p>'+esc(t(D.TABLE.intro))+'</p>';
+    h += '<div class="tablewrap"><table><tr>';
+    t(D.TABLE.head).forEach(function(c){ h += '<th>'+esc(c)+'</th>'; });
+    h += '</tr>';
+    D.TABLE.rows.forEach(function(row){
+      h += '<tr>';
+      row.forEach(function(cell){ h += '<td><code>'+esc(t(cell))+'</code></td>'; });
+      h += '</tr>';
+    });
+    h += '</table></div>';
+  }
+
+  h += '<h2>' + (LANG==="ru" ? "Грабли" : "Pitfalls") + '</h2>';
+  D.TRAPS.forEach(function(tr, i){
+    h += '<div class="note trap"><span class="tag">' + (LANG==="ru" ? "Ловушка " : "Pitfall ") + (i+1) +
+         '</span><p>'+t(tr)+'</p></div>';
+  });
+
+  if(D.OUTRO){
+    h += '<h2>' + (LANG==="ru" ? "Что из этого складывается" : "How it fits together") + '</h2>';
+    h += '<div class="lesson">' + t(D.OUTRO) + '</div>';
+  }
+
+  el("p1").innerHTML = h;
+}
+
+/* ---- вкладка 2: тренажёр ---- */
+function renderSim(){
+  var raw = D.SCENARIOS[simCur];
+  if(!Object.keys(simParams).length && scParams(raw).length) simParams = simDefaults(raw);
+  var sc = resolveSc(raw);
+  var step = simPos > 0 ? sc.steps[simPos-1] : null;
+  var prev = simPos > 1 ? sc.steps[simPos-2] : null;
+  var total = sc.steps.length;
+
+  var h = '<h2>' + (LANG==="ru" ? "Тренажёр" : "Simulator") + '</h2><p>' +
+    (LANG==="ru"
+      ? "Программа идёт по одной строке. Слева подсвечена строка, которая выполняется прямо сейчас; справа видно, что стало с переменными — изменившееся подсвечивается. Можно шагать вручную, а можно включить автопрогон и просто смотреть."
+      : "The program runs one line at a time. The line being executed is highlighted on the left; on the right you see what happened to the variables — whatever changed lights up. Step manually, or turn on autoplay and just watch.") +
+    '</p><p style="color:var(--muted);font-size:14.5px">' +
+    (LANG==="ru" ? "Клавиши: <b>→</b> шаг, <b>←</b> назад, <b>пробел</b> — пуск и пауза."
+                 : "Keys: <b>→</b> step, <b>←</b> back, <b>space</b> — play and pause.") +
+    '</p><div class="sim-modes">';
+  D.SCENARIOS.forEach(function(s, i){
+    h += '<button type="button" data-sc="'+i+'" aria-pressed="'+(i===simCur?"true":"false")+'">'+(i+1)+'. '+esc(t(s.name))+'</button>';
+  });
+  h += '</div>';
+
+  if(scParams(raw).length){
+    h += '<div class="sim-params"><span class="pl">'+esc(t(UI.tryYourself))+'</span>';
+    scParams(raw).forEach(function(d){
+      var val = simParams[d.key];
+      if(d.values){
+        h += '<label class="pfield">'+esc(t(d.label))+'<select data-param="'+d.key+'">';
+        d.values.forEach(function(v){
+          h += '<option value="'+esc(v)+'"'+(String(v)===String(val)?" selected":"")+'>'+esc(v)+'</option>';
+        });
+        h += '</select></label>';
+      } else if(d.text){
+        h += '<label class="pfield">'+esc(t(d.label))+
+             '<input type="text" data-param="'+d.key+'" value="'+esc(val)+'" maxlength="'+(d.max||12)+'" size="10"></label>';
+      } else {
+        h += '<label class="pfield">'+esc(t(d.label))+
+             '<input type="range" data-param="'+d.key+'" min="'+d.min+'" max="'+d.max+'" step="1" value="'+val+'">'+
+             '<b class="pv">'+esc(val)+'</b></label>';
+      }
+    });
+    h += '</div>';
+  }
+
+  h += '<div class="sim"><div class="sim-code">';
+  sc.code.forEach(function(codeLine, i){
+    var cls = "ln";
+    if(step && step.line === i) cls += " active";
+    else if(prev && prev.line === i) cls += " prev";
+    h += '<div class="'+cls+'" data-n="'+(i+1)+'">'+(esc(codeLine) || "&nbsp;")+'</div>';
+  });
+  h += '</div><div class="sim-side">';
+
+  /* переменные: подсветка того, что изменилось на этом шаге */
+  h += '<div class="panel"><h4>'+esc(t(UI.vars))+'</h4><div class="vars">';
+  if(step){
+    var before = {};
+    if(prev) (prev.vars||[]).forEach(function(v){ before[v[0]] = v[1]; });
+    (step.vars||[]).forEach(function(v){
+      var mark = "";
+      if(!prev || !(v[0] in before)) mark = " isnew";
+      else if(before[v[0]] !== v[1]) mark = " changed";
+      h += '<div class="var'+mark+'"><span class="vn">'+esc(v[0])+'</span>' +
+           '<span class="vv">'+esc(v[1])+'</span>' +
+           '<span class="vt">'+esc(v[2])+'</span></div>';
+    });
+  } else {
+    h += '<div class="var"><span class="vt">'+esc(t(UI.notRun))+'</span></div>';
+  }
+  h += '</div></div>';
+
+  /* башня вызовов — для рекурсии */
+  if(step && step.stack && step.stack.length){
+    h += '<div class="panel"><h4>'+esc(t(UI.callstack))+'</h4><div class="stack">';
+    step.stack.forEach(function(frame, i){
+      var last = (i === step.stack.length - 1);
+      h += '<div class="frame'+(last?" top":"")+'" style="margin-left:'+(i*14)+'px">'+esc(frame)+'</div>';
+    });
+    h += '</div></div>';
+  }
+
+  /* ячейки — для слайсов, массивов, доски */
+  if(step && step.cells){
+    h += '<div class="panel"><h4>'+esc(t(step.cellsTitle || UI.cells))+'</h4><div class="cells">';
+    step.cells.forEach(function(cell, i){
+      var on = step.cellsOn && step.cellsOn.indexOf(i) >= 0;
+      h += '<div class="cell'+(on?" on":"")+'">'+esc(cell)+'<span class="ci">'+i+'</span></div>';
+    });
+    h += '</div></div>';
+  }
+
+  /* лента байтов — для строк */
+  if(sc.tape){
+    h += '<div class="panel"><h4>'+esc(t(UI.bytes))+'</h4><div class="tape">';
+    var on = (step && step.tapeOn) ? step.tapeOn : [];
+    sc.tape.forEach(function(ch, i){
+      h += '<div class="b'+(on.indexOf(i)>=0 ? " on" : "")+'">'+esc(ch)+'<span class="bi">'+i+'</span></div>';
+    });
+    h += '</div></div>';
+  }
+
+  /* вывод: новая часть подсвечена */
+  h += '<div class="panel"><h4>'+esc(t(UI.output))+'</h4><div class="out">';
+  if(step){
+    var cur = step.out || "", was = prev ? (prev.out || "") : "";
+    if(cur.indexOf(was) === 0 && cur.length > was.length){
+      h += esc(was) + '<mark>' + esc(cur.slice(was.length)) + '</mark>';
+    } else {
+      h += esc(cur);
+    }
+  }
+  h += '</div></div></div></div>';
+
+  h += '<div class="explain">'+(step ? t(step.note) : esc(t(UI.simHint)))+'</div>';
+  h += '<div class="simbar">' +
+       '<button class="btn" id="simStep"'+(simPos>=total?" disabled":"")+'>'+esc(t(UI.step))+'</button>' +
+       '<button class="btn ghost" id="simPlay">'+esc(simTimer ? t(UI.pause) : t(UI.play))+'</button>' +
+       '<button class="btn ghost" id="simBack"'+(simPos===0?" disabled":"")+'>'+esc(t(UI.back))+'</button>' +
+       '<button class="btn ghost" id="simReset">'+esc(t(UI.restart))+'</button>' +
+       '<label class="speed">'+esc(t(UI.speed))+
+       '<input type="range" id="simSpeed" min="200" max="2000" step="100" value="'+simSpeed+'"></label>' +
+       '<div class="progress"><i style="width:'+(total ? (simPos/total*100) : 0)+'%"></i></div>' +
+       '<span class="step-label">'+simPos+' / '+total+'</span></div>';
+
+  el("p2").innerHTML = h;
+
+  Array.prototype.forEach.call(el("p2").querySelectorAll("[data-sc]"), function(b){
+    b.addEventListener("click", function(){ simStop(); simCur = +b.getAttribute("data-sc"); simPos = 0; simParams = simDefaults(D.SCENARIOS[simCur]); renderSim(); });
+  });
+  el("simStep").addEventListener("click", function(){ simStop(); simForward(); });
+  el("simBack").addEventListener("click", function(){ simStop(); if(simPos > 0){ simPos--; renderSim(); } });
+  el("simReset").addEventListener("click", function(){ simStop(); simPos = 0; renderSim(); });
+  el("simPlay").addEventListener("click", simToggle);
+  Array.prototype.forEach.call(el("p2").querySelectorAll("[data-param]"), function(inp){
+    var ev = (inp.tagName === "SELECT") ? "change" : "input";
+    inp.addEventListener(ev, function(){
+      simStop(true);
+      var v = inp.value;
+      simParams[inp.getAttribute("data-param")] = (inp.type === "range") ? +v : v;
+      simPos = 0;
+      renderSim();
+    });
+  });
+  el("simSpeed").addEventListener("input", function(){
+    simSpeed = +this.value;
+    if(simTimer){ simStop(true); simStart(); }
+  });
+}
+
+function simForward(){
+  var sc = resolveSc(D.SCENARIOS[simCur]);
+  if(simPos < sc.steps.length){ simPos++; renderSim(); return true; }
+  return false;
+}
+function simStart(){
+  simTimer = setInterval(function(){
+    if(!simForward()){ simStop(); renderSim(); }
+  }, simSpeed);
+}
+function simStop(quiet){
+  if(simTimer){ clearInterval(simTimer); simTimer = null; if(!quiet) renderSim(); }
+}
+function simToggle(){
+  if(simTimer){ simStop(); return; }
+  if(simPos >= resolveSc(D.SCENARIOS[simCur]).steps.length) simPos = 0;
+  simStart();
+  renderSim();
+}
+
+/* управление с клавиатуры, когда открыт тренажёр */
+document.addEventListener("keydown", function(e){
+  if(view !== "topic" || activeTab !== 1) return;
+  var tag = (e.target && e.target.tagName) || "";
+  if(tag === "INPUT" || tag === "TEXTAREA") return;
+  if(e.key === "ArrowRight"){ e.preventDefault(); simStop(true); simForward(); }
+  else if(e.key === "ArrowLeft"){ e.preventDefault(); simStop(true); if(simPos > 0){ simPos--; renderSim(); } }
+  else if(e.key === " "){ e.preventDefault(); simToggle(); }
+});
+
+/* ---- вкладка 3: практика ---- */
+function renderPractice(){
+  var h = '<h2>' + (LANG==="ru" ? "Набери руками" : "Type it by hand") + '</h2>';
+  h += '<p>' + (LANG==="ru"
+    ? "Десять примеров цепочкой: каждый следующий отличается от предыдущего одним изменением. Набирай, не копируй. Перед запуском пиши, что выведется — вывод спрятан под кнопкой."
+    : "Ten examples in a chain: each differs from the previous one by a single change. Type them, don't copy. Before running, write down what will be printed — the output is hidden behind a button.") + '</p>';
+
+  h += '<div class="dlrow"><button class="btn" id="dlBtn" hidden>'+esc(t(UI.download))+'</button>' +
+       '<button class="btn ghost" id="copyBtn">'+esc(t(UI.copyTxt))+'</button>' +
+       '<button class="btn ghost" id="txtBtn">'+esc(t(UI.showTxt))+'</button></div>' +
+       '<p style="font-size:14px;color:var(--muted);margin:-6px 0 18px">'+esc(t(UI.dlNote))+'</p>' +
+       '<div id="txtHost"></div>';
+
+  D.EXAMPLES.forEach(function(ex, i){
+    h += '<div class="ex"><div class="head"><span class="num">'+(i+1)+'</span>' +
+         '<span class="chg">'+esc(t(UI.changed))+' '+esc(t(ex.chg))+'</span></div>' +
+         '<pre><code>'+esc(ex.code)+'</code></pre>' +
+         '<div class="spoiler" data-sp="'+i+'"><em>'+esc(t(UI.guessIt))+'</em>' +
+         '<div style="margin-top:10px"><button class="btn ghost" data-show="'+i+'">'+esc(t(UI.showOut))+'</button></div>' +
+         '<div hidden data-out="'+i+'"><p class="ex outlabel" style="border:none;background:none;padding:0;margin:14px 0 6px">'+esc(t(UI.expected))+'</p>' +
+         '<pre style="margin:0"><code>'+esc(ex.out)+'</code></pre></div></div>' +
+         '<div class="why">'+t(ex.why)+'</div></div>';
+  });
+
+  h += '<h2>' + (LANG==="ru" ? "Десять задач" : "Ten tasks") + '</h2>';
+  h += '<p>' + (LANG==="ru"
+    ? "От простого к сложному, всё опирается только на эту тему. Каждую задачу — в свою подпапку: <code>mkdir task1</code>, запуск <code>go run ./task1</code>."
+    : "From easy to hard, all resting on this topic only. Put each task in its own subfolder: <code>mkdir task1</code>, run with <code>go run ./task1</code>.") + '</p>';
+
+  D.TASKS.forEach(function(task, i){
+    h += '<div class="task"><div class="head"><span class="num">'+(i+1)+'</span>' +
+         '<span class="title">'+esc(task.t)+'</span>' +
+         '<span class="lvl" data-l="'+task.lvl+'">'+esc(t(UI.levels[task.lvl]))+'</span></div>' +
+         '<p>'+t(task.d)+'</p>' +
+         '<p class="outlabel" style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px">'+esc(t(UI.expected))+'</p>' +
+         '<pre style="margin:0"><code>'+esc(task.e)+'</code></pre>' +
+         '<div style="margin-top:14px"><button class="btn ghost" data-hint="'+i+'">'+esc(t(UI.showHint))+'</button></div>' +
+         '<div class="hintbox" hidden data-hintbox="'+i+'">'+t(task.h)+'</div></div>';
+  });
+
+  el("p3").innerHTML = h;
+
+  Array.prototype.forEach.call(el("p3").querySelectorAll("[data-show]"), function(b){
+    b.addEventListener("click", function(){
+      var i = b.getAttribute("data-show");
+      var box = el("p3").querySelector('[data-out="'+i+'"]');
+      box.hidden = !box.hidden;
+      b.textContent = box.hidden ? t(UI.showOut) : t(UI.hideOut);
+      el("p3").querySelector('[data-sp="'+i+'"]').setAttribute("data-open", box.hidden ? "0" : "1");
+    });
+  });
+  Array.prototype.forEach.call(el("p3").querySelectorAll("[data-hint]"), function(b){
+    b.addEventListener("click", function(){
+      var box = el("p3").querySelector('[data-hintbox="'+b.getAttribute("data-hint")+'"]');
+      box.hidden = !box.hidden;
+      b.textContent = box.hidden ? t(UI.showHint) : t(UI.hideHint);
+    });
+  });
+  var dlBtn = el("dlBtn");
+  if(window.claude && typeof claude.use === "function"){
+    claude.use("downloads").then(function(downloads){
+      if(!downloads) return;                     // сохранение недоступно — кнопки просто нет
+      dlBtn.hidden = false;
+      dlBtn.addEventListener("click", function(){
+        var name = t(D.META.txt);
+        dlBtn.disabled = true;
+        dlBtn.textContent = t(UI.saving);
+        downloads.save({filename:name, data:buildTxt()}).then(function(){
+          dlBtn.textContent = t(UI.saved);
+          setTimeout(function(){ dlBtn.textContent = t(UI.download); dlBtn.disabled = false; }, 2000);
+        }, function(err){
+          dlBtn.disabled = false;
+          dlBtn.textContent = t(UI.download);
+          // отказ зрителя — это не ошибка, повторять нечего; остальное молча оставляем копирование
+          if(err && err.code !== "declined") el("txtBtn").click();
+        });
+      });
+    }, function(){ /* недоступно — работаем без кнопки */ });
+  }
+
+  el("copyBtn").addEventListener("click", function(){
+    var btn = el("copyBtn");
+    copyTxt(buildTxt(), function(ok){
+      if(ok){
+        btn.textContent = t(UI.copied);
+        setTimeout(function(){ btn.textContent = t(UI.copyTxt); }, 2000);
+      } else {
+        el("txtBtn").click();
+      }
+    });
+  });
+  el("txtBtn").addEventListener("click", function(){
+    var host = el("txtHost");
+    if(host.firstChild){ host.innerHTML = ""; el("txtBtn").textContent = t(UI.showTxt); return; }
+    var pre = document.createElement("div");
+    pre.className = "txtbox";
+    pre.textContent = buildTxt();
+    host.appendChild(pre);
+    el("txtBtn").textContent = t(UI.hideTxt);
+  });
+}
+
+/* ---- вкладка 5: вопросы ---- */
+function renderQA(){
+  var h = '<h2>' + (LANG==="ru" ? "Вопросы и ответы" : "Questions and answers") + '</h2>';
+  h += '<p>' + (LANG==="ru"
+    ? "Отвечай на каждый вопрос вслух своими словами до того, как раскроешь ответ. Если получилось объяснить — тема твоя."
+    : "Answer each question out loud in your own words before opening it. If you can explain it, the topic is yours.") + '</p>';
+  D.QA.forEach(function(item){
+    h += '<details class="qa"><summary>'+t(item.q)+'</summary><div class="qabody">'+t(item.a)+'</div></details>';
+  });
+  el("p5").innerHTML = h;
+}
+
+/* ---- вкладка 4: тест ---- */
+var QN = 15, answered = 0, correct = 0;
+var timerOn = false, seconds = 0, tick = null;
+
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function buildQuiz(){
+  quizSet = shuffle(D.BANK).slice(0, QN).map(function(item){
+    var pairs = item.opts.map(function(o, i){ return {text:o, right: i === item.ok}; });
+    return {q:item.q, code:item.code, why:item.why, opts:shuffle(pairs), done:false};
+  });
+  answered = 0; correct = 0;
+  resetTimer();
+}
+
+function renderQuiz(keep){
+  if(!keep || !quizSet.length) buildQuiz();
+
+  var h = '<h2>' + (LANG==="ru" ? "Тест" : "Quiz") + '</h2>';
+  h += '<p>' + (LANG==="ru"
+    ? "Пятнадцать вопросов из большого набора, порядок вариантов случайный — позицию правильного ответа не запомнить. После каждого ответа объясняется, почему так. Тест можно проходить хоть первым: он за пять минут покажет, что читать."
+    : "Fifteen questions drawn from a larger pool, with options in random order — there is no position to memorise. Every answer comes with an explanation. You can take it first: five minutes and you know what to read.") + '</p>';
+
+  h += '<div class="quizbar"><button class="btn" id="quizShuffle">'+esc(t(UI.shuffle))+'</button>' +
+       '<button class="btn ghost" id="timerToggle">'+esc(timerOn ? t(UI.timerOn) : t(UI.timerOff))+'</button>' +
+       '<span class="timer'+(timerOn?" run":"")+'" id="timer"'+(timerOn?"":" hidden")+'>'+fmtTime(seconds)+'</span>' +
+       '<span class="grow"></span><span class="score" id="score"></span></div>';
+  h += '<div class="result" id="result"></div><div id="quizBody"></div>';
+
+  el("p4").innerHTML = h;
+
+  var body = el("quizBody");
+  var letters = ["A","B","C","D"];
+  quizSet.forEach(function(item, qi){
+    var box = document.createElement("div");
+    box.className = "q";
+    var head = '<p class="qn">' + (LANG==="ru" ? "Вопрос " : "Question ") + (qi+1) + ' / ' + QN + '</p>' +
+               '<p class="qt">'+t(item.q)+'</p>';
+    if(item.code) head += '<pre><code>'+esc(item.code)+'</code></pre>';
+    box.innerHTML = head;
+
+    var opts = document.createElement("div");
+    opts.className = "opts";
+    item.opts.forEach(function(opt, oi){
+      var b = document.createElement("button");
+      b.className = "opt";
+      b.innerHTML = '<span class="letter">'+letters[oi]+'</span><span><code>'+esc(t(opt.text))+'</code></span>';
+      b.addEventListener("click", function(){
+        if(item.done) return;
+        item.done = true; answered++;
+        if(opt.right) correct++;
+        Array.prototype.forEach.call(opts.children, function(btn, bi){
+          btn.disabled = true;
+          if(item.opts[bi].right) btn.classList.add("correct");
+          else if(bi === oi) btn.classList.add("wrong");
+        });
+        var why = document.createElement("div");
+        why.className = "why " + (opt.right ? "good" : "bad");
+        why.innerHTML = '<b>'+esc(opt.right ? t(UI.correct) : t(UI.wrong))+'</b><p>'+t(item.why)+'</p>';
+        box.appendChild(why);
+        updateScore();
+        if(answered === QN) finishQuiz();
+      });
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+    body.appendChild(box);
+  });
+
+  updateScore();
+  el("quizShuffle").addEventListener("click", function(){
+    buildQuiz(); renderQuiz(true);
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+  el("timerToggle").addEventListener("click", function(){
+    timerOn = !timerOn; resetTimer(); renderQuiz(true);
+  });
+}
+
+function updateScore(){
+  var s = el("score");
+  if(s) s.innerHTML = esc(t(UI.answered))+' <b>'+answered+'</b> '+esc(t(UI.of))+' '+QN+' · '+esc(t(UI.right))+' <b>'+correct+'</b>';
+}
+
+function fmtTime(s){
+  var m = Math.floor(s/60), r = s%60;
+  return (m<10?"0":"")+m+":"+(r<10?"0":"")+r;
+}
+function resetTimer(){
+  if(tick){ clearInterval(tick); tick = null; }
+  seconds = 0;
+  if(timerOn){
+    tick = setInterval(function(){
+      seconds++;
+      var tEl = el("timer");
+      if(tEl) tEl.textContent = fmtTime(seconds);
+    }, 1000);
+  }
+}
+
+function finishQuiz(){
+  if(tick){ clearInterval(tick); tick = null; }
+  var verdict, advice;
+  if(correct >= 14){
+    verdict = LANG==="ru" ? "Тема взята" : "Topic solid";
+    advice  = LANG==="ru" ? "Иди к задачам, а через день вернись и пройди тест ещё раз — так оно останется." : "Move on to the tasks, and come back in a day to retake this — that is what makes it stick.";
+  } else if(correct >= 12){
+    verdict = LANG==="ru" ? "Почти" : "Almost";
+    advice  = LANG==="ru" ? "Перечитай правила, где ошибся, и перемешай тест заново." : "Reread the rules you missed and shuffle the quiz again.";
+  } else if(correct >= 8){
+    verdict = LANG==="ru" ? "Нужен второй заход" : "Needs another pass";
+    advice  = LANG==="ru" ? "Прогони тренажёр целиком и набери примеры руками. Потом сюда снова." : "Walk through the whole simulator and type the examples by hand. Then come back.";
+  } else {
+    verdict = LANG==="ru" ? "Рано дальше" : "Too early to move on";
+    advice  = LANG==="ru" ? "Начни с правил и примеров — читать тест бессмысленно, пока код не набран руками." : "Start with the rules and examples — the quiz means little until you have typed the code yourself.";
+  }
+  var res = el("result");
+  res.className = "result show";
+  res.innerHTML = '<p class="big">'+correct+' / '+QN+'</p>' +
+    '<p style="margin:0 0 4px"><strong>'+esc(verdict)+'</strong>'+(seconds>0 ? ' · '+fmtTime(seconds) : '')+'</p>' +
+    '<p style="margin:0;color:var(--muted)">'+esc(advice)+'</p>';
+  res.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+/* ================= TXT ================= */
+function strip(html){
+  return String(html)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<li>/gi, "  - ")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(/&nbsp;/g," ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+function line(ch){ return new Array(79).join(ch); }
+
+function buildTxt(){
+  var ru = LANG === "ru";
+  var o = [];
+  var folder = D.META.folder;
+
+  o.push(line("="));
+  o.push((ru ? "GO С НУЛЯ · ТЕМА " : "GO FROM ZERO · TOPIC ") + D.META.n + " — " + t(D.META.title).toUpperCase());
+  o.push(ru ? "Примеры для набора руками" : "Examples to type by hand");
+  o.push(line("="));
+  o.push("");
+  o.push(ru ? "Правила темы, тренажёр, задачи и тест — на странице:" : "Rules, simulator, tasks and quiz are on the page:");
+  o.push("  " + location.href.split("#")[0] + "#" + D.META.slug);
+  o.push("");
+  o.push(line("="));
+  o.push(ru ? "ПОДГОТОВКА" : "SETUP");
+  o.push(line("="));
+  o.push("");
+  o.push(ru ? "Создай папку темы и модуль — набери руками, не копируй:" : "Create the topic folder and module — type it, don't copy:");
+  o.push("");
+  o.push("    mkdir " + folder);
+  o.push("    cd " + folder);
+  o.push("    go mod init " + folder);
+  o.push("");
+  o.push(ru ? "Дальше весь код набирай в файл main.go в этой папке." : "From here on, type all code into main.go in that folder.");
+  o.push(ru ? "Запуск программы:" : "To run the program:");
+  o.push("");
+  o.push("    go run .");
+  o.push("");
+  o.push(line("-"));
+  o.push(ru ? "КАК РАБОТАТЬ С ПРИМЕРАМИ" : "HOW TO WORK WITH THE EXAMPLES");
+  o.push(line("-"));
+  o.push("");
+  o.push(ru
+    ? "1. Набирай руками. Не копируй мышкой — пока печатаешь, глаз замечает\n   скобки, точки и кавычки, которые при копировании проходят мимо."
+    : "1. Type it out. Don't copy-paste — while you type, your eye catches the\n   brackets, dots and quotes that copying slides right past.");
+  o.push("");
+  o.push(ru
+    ? "2. ПЕРЕД запуском запиши, что программа выведет. Потом запусти и сверь\n   с ответом под примером."
+    : "2. BEFORE running, write down what it will print. Then run it and compare\n   with the answer under the example.");
+  o.push("");
+  o.push(ru
+    ? "3. Не совпало — это и есть самое ценное место. Разберись, почему вышло\n   именно так, и только потом иди дальше."
+    : "3. A mismatch is the valuable part. Work out why it came out that way\n   before moving on.");
+  o.push("");
+  o.push(ru
+    ? "4. Заработало — сломай нарочно: убери кавычки, поменяй тип, поставь другой\n   индекс. Прочитай, что скажет компилятор."
+    : "4. Once it works, break it on purpose: drop the quotes, change the type,\n   use a different index. Read what the compiler says.");
+  o.push("");
+  o.push(ru
+    ? "5. Каждый следующий пример отличается от предыдущего одним изменением —\n   оно указано в заголовке. Найди его глазами до запуска."
+    : "5. Each example differs from the previous one by a single change — it is\n   named in the heading. Spot it before you run anything.");
+  o.push("");
+  o.push(line("="));
+  o.push(ru ? "ПРИМЕРЫ" : "EXAMPLES");
+  o.push(line("="));
+
+  D.EXAMPLES.forEach(function(ex, i){
+    o.push("");
+    o.push(line("-"));
+    o.push((ru ? "ПРИМЕР " : "EXAMPLE ") + (i+1) + ".  " + t(UI.changed) + " " + t(ex.chg));
+    o.push(line("-"));
+    o.push(ex.code);
+    o.push("");
+    o.push(ru ? "ВЫВОД:" : "OUTPUT:");
+    o.push(ex.out);
+    o.push("");
+    o.push(strip(t(ex.why)));
+  });
+
+  o.push("");
+  o.push(line("="));
+  o.push(ru
+    ? "Набрал все десять — переходи к задачам на странице темы, вкладка «Практика»."
+    : "Done with all ten — move on to the tasks on the topic page, “Practice” tab.");
+  o.push(line("="));
+  return o.join("\n");
+}
+
+function copyTxt(txt, done){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ done(true); }, function(){ done(legacyCopy(txt)); });
+    return;
+  }
+  done(legacyCopy(txt));
+}
+
+function legacyCopy(txt){
+  try{
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.setAttribute("readonly","");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = document.execCommand("copy");
+    ta.remove();
+    return ok;
+  }catch(e){ return false; }
+}
+
+/* ================= СТАРТ ================= */
+(function(){
+  var savedTheme = store("guide-theme");
+  if(savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
+  var savedLang = store("guide-lang");
+  if(savedLang === "en" || savedLang === "ru") LANG = savedLang;
+  if(window.matchMedia){
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if(mq.addEventListener) mq.addEventListener("change", paintThemeBtn);
+  }
+  var slug = (location.hash || "").replace("#","");
+  var found = -1;
+  TOPICS.forEach(function(tp, i){ if(tp.META && tp.META.slug === slug) found = i; });
+  if(found >= 0){ topicIdx = found; D = TOPICS[found]; view = "topic"; }
+  render();
+})();
+</script>
+

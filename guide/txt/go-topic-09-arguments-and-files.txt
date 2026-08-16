@@ -1,0 +1,317 @@
+==============================================================================
+GO FROM ZERO · TOPIC 9 — ARGUMENTS AND FILES
+Examples to type by hand
+==============================================================================
+
+Rules, simulator, tasks and quiz are on the page:
+  https://claude.ai/code/artifact/27d78af0-01a9-4700-958f-ac25f88cc997#09-args-files
+
+==============================================================================
+SETUP
+==============================================================================
+
+Create the topic folder and module — type it, don't copy:
+
+    mkdir args1
+    cd args1
+    go mod init args1
+
+From here on, type all code into main.go in that folder.
+To run the program:
+
+    go run .
+
+------------------------------------------------------------------------------
+HOW TO WORK WITH THE EXAMPLES
+------------------------------------------------------------------------------
+
+1. Type it out. Don't copy-paste — while you type, your eye catches the
+   brackets, dots and quotes that copying slides right past.
+
+2. BEFORE running, write down what it will print. Then run it and compare
+   with the answer under the example.
+
+3. A mismatch is the valuable part. Work out why it came out that way
+   before moving on.
+
+4. Once it works, break it on purpose: drop the quotes, change the type,
+   use a different index. Read what the compiler says.
+
+5. Each example differs from the previous one by a single change — it is
+   named in the heading. Spot it before you run anything.
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+------------------------------------------------------------------------------
+EXAMPLE 1.  What changed: the first one, type it all
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	fmt.Println(len(os.Args))
+	fmt.Println(os.Args[1:])
+}
+
+OUTPUT:
+1
+[]
+
+You ran it with no arguments, yet the length is 1: the program path is inside. The slice [1:] cuts it off and leaves an empty slice.
+Run it differently: go run . 10 20 gives 3 and [10 20].
+
+------------------------------------------------------------------------------
+EXAMPLE 2.  What changed: the arguments went through a loop
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	args := os.Args[1:]
+	for i, a := range args {
+		fmt.Println(i, a)
+	}
+	fmt.Println("всего:", len(args))
+}
+
+OUTPUT:
+всего: 0
+
+The loop took no steps — the slice is empty, and that is not an error. range over an empty slice simply does nothing.
+Run it differently: go run . go is fun.
+
+------------------------------------------------------------------------------
+EXAMPLE 3.  What changed: a check for an empty list appeared
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	args := os.Args[1:]
+	if len(args) == 0 {
+		fmt.Println("аргументов нет")
+		return
+	}
+	fmt.Println("первый:", args[0])
+}
+
+OUTPUT:
+аргументов нет
+
+The check sits before touching args[0] — that alone keeps the program alive. Break it: delete the whole if and run with no arguments — read the panic text.
+
+------------------------------------------------------------------------------
+EXAMPLE 4.  What changed: the message moved to os.Stderr
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	args := os.Args[1:]
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "аргументов нет")
+		return
+	}
+	fmt.Println("первый:", args[0])
+}
+
+OUTPUT:
+аргументов нет
+
+The screen output is identical to the previous example — but the stream is different. Prove it: run both as go run . > out.txt. The previous one goes silent, this one still shows the message.
+
+------------------------------------------------------------------------------
+EXAMPLE 5.  What changed: return became os.Exit
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	defer fmt.Println("это конец main")
+	args := os.Args[1:]
+	if len(args) == 0 {
+		fmt.Println("аргументов нет, выходим")
+		os.Exit(0)
+	}
+	fmt.Println("первый:", args[0])
+}
+
+OUTPUT:
+аргументов нет, выходим
+
+The defer line never printed: os.Exit ends the program instantly and deferred calls do not run. Break it: swap os.Exit(0) for return and the line shows up.
+
+------------------------------------------------------------------------------
+EXAMPLE 6.  What changed: the argument becomes a number
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func main() {
+	s := "42"
+	if len(os.Args) > 1 {
+		s = os.Args[1]
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "не число:", s)
+		return
+	}
+	fmt.Println(n * 2)
+}
+
+OUTPUT:
+84
+
+No argument was passed, so the default "42" is used — a normal move for an optional parameter. Atoi turned the string into a number and made multiplication possible.
+Run it differently: go run . 7 gives 14, and go run . abc gives the error message.
+
+------------------------------------------------------------------------------
+EXAMPLE 7.  What changed: the default value stopped being a number
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func main() {
+	s := "42x"
+	if len(os.Args) > 1 {
+		s = os.Args[1]
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		fmt.Println("n =", n)
+		fmt.Println("err =", err)
+		return
+	}
+	fmt.Println(n * 2)
+}
+
+OUTPUT:
+n = 0
+err = strconv.Atoi: parsing "42x": invalid syntax
+
+Two lessons at once. First: on an error the number is not garbage but zero — and if you skip the check, the program happily computes 0 * 2. Second: err prints directly and tells you exactly what failed to parse.
+
+------------------------------------------------------------------------------
+EXAMPLE 8.  What changed: a file instead of an argument
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	err := os.WriteFile("note.txt", []byte("one\ntwo\nthree\n"), 0644)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
+	data, err := os.ReadFile("note.txt")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
+	fmt.Println(len(data))
+	fmt.Print(string(data))
+}
+
+OUTPUT:
+14
+one
+two
+three
+
+The program created a file next to itself and then read it back. 14 counts bytes including three newlines, not lines. The last call is Print, not Println: the final newline is already in the file.
+Break it: replace fmt.Print(string(data)) with fmt.Println(data) and see what data really holds.
+
+------------------------------------------------------------------------------
+EXAMPLE 9.  What changed: the file is not there
+------------------------------------------------------------------------------
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	data, err := os.ReadFile("missing.txt")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "не прочитал:", err)
+		fmt.Fprintln(os.Stderr, "байтов получено:", len(data))
+		return
+	}
+	fmt.Print(string(data))
+}
+
+OUTPUT:
+не прочитал: open missing.txt: no such file or directory
+байтов получено: 0
+
+The error text names both the file and the reason — reading it beats guessing. Meanwhile there is no data at all: data is worthless after an error.
+Break it: write data, _ := os.ReadFile(...) and drop the if — the program goes silent and prints nothing.
+
+------------------------------------------------------------------------------
+EXAMPLE 10.  What changed: the data source is stdin
+------------------------------------------------------------------------------
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	sc := bufio.NewScanner(os.Stdin)
+	n := 0
+	for sc.Scan() {
+		n++
+		fmt.Println(n, sc.Text())
+	}
+	fmt.Println("строк:", n)
+}
+
+OUTPUT:
+строк: 0
+
+This is the output when there is nothing on the input. Plain go run . waits while you type; press Ctrl+D and it finishes.
+Run it differently: printf 'one\ntwo\n' | go run . prints three lines, the last one строк: 2.
+
+==============================================================================
+Done with all ten — move on to the tasks on the topic page, “Practice” tab.
+==============================================================================
