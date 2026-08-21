@@ -15,3 +15,6 @@ tmp/
 raid3-proverka/
 quadchecker/quadchecker
 guide/index.html
+
+# собранное при проверке решений
+exam-prep/tests/*/go.sum

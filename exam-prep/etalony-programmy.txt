@@ -1,0 +1,942 @@
+===== only1 (only1/main.go) =====
+package main
+
+import "github.com/01-edu/z01"
+
+func main() {
+	z01.PrintRune('1')
+}
+
+
+===== onlya (onlya/main.go) =====
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Print("a")
+}
+
+
+===== onlyb (onlyb/main.go) =====
+package main
+
+import "github.com/01-edu/z01"
+
+func main() {
+	z01.PrintRune('B')
+}
+
+
+===== onlyf (onlyf/main.go) =====
+package main
+
+import "github.com/01-edu/z01"
+
+func main() {
+	z01.PrintRune('f')
+}
+
+
+===== onlyz (onlyz/main.go) =====
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Print("z")
+}
+
+
+===== countcharacter (count-character.go) =====
+package solutions
+
+func CountChar(str string, c rune) int {
+	var count int
+	for _, v := range str {
+		if rune(v) == c {
+			count++
+		}
+	}
+	return count
+}
+
+
+===== searchreplace (searchreplace/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	if len(os.Args) == 4 {
+		fmt.Println(strings.Map(func(r rune) rune {
+			if r == []rune(os.Args[2])[0] {
+				return []rune(os.Args[3])[0]
+			}
+			return r
+		}, os.Args[1]))
+	}
+}
+
+
+===== cleanstr (cleanstr/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"regexp"
+	"strings"
+)
+
+func main() {
+	if len(os.Args) == 2 {
+		re := regexp.MustCompile(`( +)`)
+		fmt.Print(re.ReplaceAllString(strings.Trim(os.Args[1], " "), " "))
+	}
+	fmt.Println()
+}
+
+
+===== expandstr (expandstr/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func deleteExtraSpaces(a []string) (res []string) {
+	for _, v := range a {
+		if v != "" {
+			res = append(res, v)
+		}
+	}
+	return
+}
+
+func main() {
+	if len(os.Args) == 2 {
+		arg := strings.Split(os.Args[1], " ")
+		arg = deleteExtraSpaces(arg)
+		fmt.Println(strings.Join(arg, "   "))
+	}
+}
+
+
+===== printrevcomb (printrevcomb/main.go) =====
+package main
+
+import "fmt"
+
+func main() {
+	for a := 9; a >= 2; a-- {
+		for b := a - 1; b >= 1; b-- {
+			for c := b - 1; c >= 0; c-- {
+				fmt.Printf("%d%d%d", a, b, c)
+				if a+b+c != 3 {
+					fmt.Print(", ")
+				}
+			}
+		}
+	}
+	fmt.Println()
+}
+
+
+===== addprimesum (addprimesum/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+
+	"github.com/01-edu/go-tests/lib/is"
+)
+
+func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("0")
+	} else {
+		argument, _ := strconv.Atoi(os.Args[1])
+
+		if argument < 0 {
+			fmt.Println("0")
+		} else {
+			result := 0
+			for ; argument >= 0; argument-- {
+				if is.Prime(argument) {
+					result += argument
+				}
+			}
+			fmt.Println(result)
+		}
+	}
+}
+
+
+===== fprime (fprime/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func fprime(value int) {
+	if value == 1 {
+		return
+	}
+	divisionIterator := 2
+	for value > 1 {
+		if value%divisionIterator == 0 {
+			fmt.Print(divisionIterator)
+			value = value / divisionIterator
+
+			if value > 1 {
+				fmt.Print("*")
+			}
+			divisionIterator--
+		}
+		divisionIterator++
+	}
+	fmt.Println()
+}
+
+func main() {
+	if len(os.Args) == 2 {
+		if i, err := strconv.Atoi(os.Args[1]); err == nil {
+			fprime(i)
+		}
+	}
+}
+
+
+===== hiddenp (hiddenp/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	var i int
+	if len(os.Args) != 3 {
+		return
+	}
+	for _, r := range os.Args[1] {
+		j := strings.Index(os.Args[2][i:], string(r))
+		if j == -1 {
+			fmt.Println("0")
+			return
+		}
+		i += j + 1
+	}
+	fmt.Println("1")
+}
+
+
+===== inter (inter/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func result(s1 string, s2 string) string {
+	var rest []rune
+	for _, a := range s1 {
+		for _, b := range s2 {
+			if a == b && !strings.ContainsRune(string(rest), a) {
+				rest = append(rest, a)
+			}
+		}
+	}
+	return string(rest)
+}
+
+func main() {
+	if len(os.Args) == 3 {
+		fmt.Println(result(os.Args[1], os.Args[2]))
+	}
+}
+
+
+===== reversestrcap (reversestrcap/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"unicode"
+)
+
+func main() {
+	for _, arg := range os.Args[1:] {
+		arg := []rune(arg)
+		for j, r := range arg {
+			if j+1 == len(arg) || arg[j+1] == ' ' {
+				arg[j] = unicode.ToUpper(r)
+			} else {
+				arg[j] = unicode.ToLower(r)
+			}
+		}
+		fmt.Println(string(arg))
+	}
+}
+
+
+===== union (union/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	if len(os.Args) == 3 {
+		var res string
+		s1 := os.Args[1]
+		s2 := os.Args[2]
+
+		for _, v := range s1 {
+			if !strings.ContainsRune(res, v) {
+				res += string(v)
+			}
+		}
+		for _, v := range s2 {
+			if !strings.ContainsRune(res, v) {
+				res += string(v)
+			}
+		}
+		fmt.Print(res)
+	}
+	fmt.Println()
+}
+
+
+===== wdmatch (wdmatch/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func ok(s1 string, s2 string) bool {
+	runes1 := []rune(s1)
+	runes2 := []rune(s2)
+	var rest string
+	count := 0
+	for i := 0; i < len(runes1); i++ {
+		for j := count; j < len(runes2); j++ {
+			if runes1[i] == runes2[j] {
+				rest += string(runes1[i])
+				j = len(runes2) - 1
+			}
+			count++
+		}
+	}
+	return s1 == rest
+}
+
+func main() {
+	if len(os.Args) == 3 {
+		if ok(os.Args[1], os.Args[2]) {
+			fmt.Println(os.Args[1])
+		}
+	}
+}
+
+
+===== findpairs (findpairs/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func findPairs(arr []int, targetSum int) [][]int {
+	var pairs [][]int
+	for i := 0; i < len(arr); i++ {
+		for j := i + 1; j < len(arr); j++ {
+			if arr[i]+arr[j] == targetSum {
+				pairs = append(pairs, []int{i, j})
+			}
+		}
+	}
+	return pairs
+}
+
+func isValidArrayFormat(s string) bool {
+	s = strings.TrimSpace(s)
+	if len(s) < 2 || s[0] != '[' || s[len(s)-1] != ']' {
+		return false
+	}
+	return true
+}
+
+func main() {
+	if len(os.Args) != 3 {
+		fmt.Println("Invalid input.")
+		return
+	}
+
+	arrayStr := os.Args[1]
+	targetStr := os.Args[2]
+
+	if !isValidArrayFormat(arrayStr) {
+		fmt.Println("Invalid input.")
+		return
+	}
+
+	arrayStr = strings.Trim(arrayStr, "[]")
+	strNums := strings.Split(arrayStr, ",")
+	var arr []int
+	for _, strNum := range strNums {
+		s := strings.TrimSpace(strNum)
+		num, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Printf("Invalid number: %s\n", s)
+			return
+		}
+		arr = append(arr, num)
+	}
+
+	targetSum, err := strconv.Atoi(targetStr)
+	if err != nil {
+		fmt.Println("Invalid target sum.")
+		return
+	}
+
+	pairs := findPairs(arr, targetSum)
+	if len(pairs) > 0 {
+		fmt.Printf("Pairs with sum %d: %v\n", targetSum, pairs)
+	} else {
+		fmt.Println("No pairs found.")
+	}
+}
+
+
+===== revwstr (revwstr/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	if len(os.Args) == 2 {
+		a := strings.Split(os.Args[1], " ")
+		for i := len(a) - 1; i >= 0; i-- {
+			fmt.Print(a[i])
+			if i != 0 {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
+
+===== rostring (rostring/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func deleteExtraSpaces(a []string) []string {
+	var res []string
+	for _, v := range a {
+		if v != "" {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
+func main() {
+	if len(os.Args) == 2 {
+		words := strings.Split(os.Args[1], " ")
+		words = deleteExtraSpaces(words)
+		if len(words) >= 1 {
+			for _, v := range words[1:] {
+				fmt.Print(v, " ")
+			}
+			fmt.Print(words[0])
+		}
+	}
+	fmt.Println()
+}
+
+
+===== options (options/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"unicode"
+)
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("options: abcdefghijklmnopqrstuvwxyz")
+		return
+	}
+
+	var options [32]bool
+	for _, v := range os.Args {
+		if len(v) < 2 {
+			fmt.Println("Invalid Option")
+			return
+		}
+		if v[0] == '-' {
+			if v[1] == 'h' {
+				fmt.Println("options: abcdefghijklmnopqrstuvwxyz")
+				return
+			}
+			// fill options
+			for _, r := range v[1:] {
+				if !unicode.Is(unicode.Latin, r) {
+					fmt.Println("Invalid Option")
+					return
+				}
+				options['z'-r+6] = true
+			}
+		}
+	}
+	for i, v := range options {
+		if i%8 == 0 && i != 0 {
+			fmt.Print(" ")
+		}
+		if v {
+			fmt.Print(1)
+		} else {
+			fmt.Print(0)
+		}
+	}
+	fmt.Println()
+}
+
+
+===== piglatin (piglatin/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	if len(os.Args) != 2 || os.Args[1] == "" {
+		return
+	}
+	s := os.Args[1]
+	vowel := strings.IndexAny(s, "aeiouAEIOU")
+	if vowel == -1 {
+		fmt.Println("No vowels")
+	} else {
+		fmt.Println(string(s[vowel:]) + string(s[:vowel]) + "ay")
+	}
+}
+
+
+===== romannumbers (romannumbers/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+type roman struct {
+	num        int
+	romanDigit string
+}
+
+func main() {
+	if len(os.Args) == 2 {
+		nbr, err := strconv.Atoi(os.Args[1])
+		if err != nil || nbr >= 4000 || nbr == 0 {
+			fmt.Println("ERROR: cannot convert to roman digit")
+			return
+		}
+		patter := []roman{
+			{num: 1000, romanDigit: "M"},
+			{num: 900, romanDigit: "CM"},
+			{num: 500, romanDigit: "D"},
+			{num: 400, romanDigit: "CD"},
+			{num: 100, romanDigit: "C"},
+			{num: 90, romanDigit: "XC"},
+			{num: 50, romanDigit: "L"},
+			{num: 40, romanDigit: "XL"},
+			{num: 10, romanDigit: "X"},
+			{num: 9, romanDigit: "IX"},
+			{num: 5, romanDigit: "V"},
+			{num: 4, romanDigit: "IV"},
+			{num: 1, romanDigit: "I"},
+		}
+		sumRoman, romandigit := print(nbr, patter)
+		fmt.Println(strings.TrimSuffix(sumRoman, "+"))
+		fmt.Println(romandigit)
+	}
+}
+
+func print(nbr int, patter []roman) (string, string) {
+	var sumRomanDigit, result string
+	for _, v := range patter {
+		for nbr >= v.num {
+			sumRomanDigit += v.romanDigit + "+"
+			result += v.romanDigit
+			nbr -= v.num
+		}
+	}
+	sumRomanDigit = formatsum(sumRomanDigit, patter)
+	return sumRomanDigit, result
+}
+
+func formatsum(a string, patter []roman) string {
+	result2 := strings.Split(a, "+")
+
+	for i, v := range result2 {
+		if len(v) == 2 {
+			result2[i] = fmt.Sprintf("(%s-%s)", string(result2[i][1]), string(result2[i][0]))
+		}
+	}
+	a = strings.Join(result2, "+")
+	return a
+}
+
+
+===== brackets (brackets/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func matchBrackets(exp string) bool {
+	runes := []rune(exp)
+	var opened []rune
+	ptr := -1
+	for _, c := range runes {
+		if c == '(' || c == '[' || c == '{' {
+			opened = append(opened, c)
+			ptr++
+		} else if c == ')' {
+			if ptr < 0 || opened[ptr] != '(' {
+				return false
+			}
+			opened = opened[:len(opened)-1]
+			ptr--
+		} else if c == ']' {
+			if ptr < 0 || opened[ptr] != '[' {
+				return false
+			}
+			opened = opened[:len(opened)-1]
+			ptr--
+		} else if c == '}' {
+			if ptr < 0 || opened[ptr] != '{' {
+				return false
+			}
+			opened = opened[:len(opened)-1]
+			ptr--
+		}
+	}
+	return len(opened) == 0
+}
+
+func main() {
+	if len(os.Args) == 1 {
+		fmt.Println()
+	} else {
+		for _, v := range os.Args[1:] {
+			if matchBrackets(v) {
+				fmt.Println("OK")
+			} else {
+				fmt.Println("Error")
+			}
+		}
+	}
+}
+
+
+===== rpncalc (rpncalc/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func deleteExtraSpaces(a []string) (res []string) {
+	for _, v := range a {
+		if v != "" {
+			res = append(res, v)
+		}
+	}
+	return
+}
+
+func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("Error")
+		return
+	}
+	var values []int
+	op := strings.Split(os.Args[1], " ")
+	op = deleteExtraSpaces(op)
+	for _, v := range op {
+		val, err := strconv.Atoi(v)
+
+		if err == nil {
+			values = append(values, val)
+			continue
+		}
+
+		n := len(values)
+		if n < 2 {
+			fmt.Println("Error")
+			return
+		}
+
+		switch v {
+		case "+":
+			values[n-2] += values[n-1]
+			values = values[:n-1]
+		case "-":
+			values[n-2] -= values[n-1]
+			values = values[:n-1]
+		case "*":
+			values[n-2] *= values[n-1]
+			values = values[:n-1]
+		case "/":
+			values[n-2] /= values[n-1]
+			values = values[:n-1]
+		case "%":
+			values[n-2] %= values[n-1]
+			values = values[:n-1]
+		default:
+			fmt.Println("Error")
+			return
+		}
+	}
+	if len(values) == 1 {
+		fmt.Println(values[0])
+	} else {
+		fmt.Println("Error")
+	}
+}
+
+
+===== brainfuck (brainfuck/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+const SIZE = 2048
+
+func main() {
+	if len(os.Args) != 2 {
+		return
+	}
+	progpoint := []byte(os.Args[1])
+	var arby [SIZE]byte
+	pos := 0
+	openBr := 0         // opened brackets
+	i := 0              // iterates through the source code passed in the argument
+	N := len(progpoint) // length of the source code
+	for i >= 0 && i < N {
+		switch progpoint[i] {
+		case '>':
+			// Increment the pointer
+			pos++
+		case '<':
+			// decrement the pointes
+			pos--
+		case '+':
+			// increment the pointed byte
+			arby[pos]++
+		case '-':
+			// decrement the pointed byte
+			arby[pos]--
+		case '.':
+			// print the pointed byte on std output
+			fmt.Printf("%c", rune(arby[pos]))
+		case '[':
+			// go to the matching ']' if the pointed byte is 0 (while start)
+			openBr = 0
+			if arby[pos] == 0 {
+				for i < N && (progpoint[i] != byte(']') || openBr > 1) {
+					if progpoint[i] == byte('[') {
+						openBr++
+					} else if progpoint[i] == byte(']') {
+						openBr--
+					}
+					i++
+				}
+			}
+		case ']':
+			// go to the matching '[' if the pointed byte is not 0 (while end)
+			openBr = 0
+			if arby[pos] != 0 {
+				for i >= 0 && (progpoint[i] != byte('[') || openBr > 1) {
+					if progpoint[i] == byte(']') {
+						openBr++
+					} else if progpoint[i] == byte('[') {
+						openBr--
+					}
+					i--
+				}
+			}
+		}
+		i++
+	}
+}
+
+
+===== grouping (grouping/main.go) =====
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+	"unicode"
+)
+
+func singleSearch(exp []string, text string) []string {
+	items := strings.Split(text, " ")
+	var result []string
+
+	for _, item := range items {
+		for _, word := range exp {
+			if strings.Contains(item, word) {
+				result = append(result, item)
+			}
+		}
+	}
+	return result
+}
+
+func simpleSearch(runes []rune, text string) []string {
+	exp := string(runes)
+
+	var result []string
+	if !strings.ContainsRune(exp, '|') {
+		helper := []string{exp}
+		result = append(singleSearch(helper, text))
+	} else {
+		expWords := strings.Split(exp, "|")
+		result = append(result, singleSearch(expWords, text)...)
+	}
+	return result
+}
+
+func brackets(regexp, text string) {
+	if text == "" || regexp == "" {
+		return
+	}
+	runes := []rune(regexp)
+
+	if runes[0] == '(' && runes[len(runes)-1] == ')' {
+		runes = runes[1 : len(runes)-1]
+		result := simpleSearch(runes, text)
+		for i, s := range result {
+			if !unicode.IsLetter(rune(s[len(s)-1])) {
+				s = s[0 : len(s)-1]
+			}
+			fmt.Printf("%d: %s\n", i+1, s)
+		}
+	}
+}
+
+func main() {
+	if len(os.Args) == 3 {
+		brackets(os.Args[1], os.Args[2])
+	}
+}
+
+
+===== itoa (itoa.go) =====
+package solutions
+
+import "strconv"
+
+var Itoa = strconv.Itoa
+
+
+===== printmemory (printmemory.go) =====
+package solutions
+
+import (
+	"fmt"
+	"strings"
+)
+
+func PrintMemory(a [10]byte) {
+	str := ""
+	for i, nbr := range a {
+		fmt.Printf("%.2x", nbr)
+
+		if ((i+1)%4 == 0 && i != 0) || i == len(a)-1 {
+			fmt.Println()
+		} else {
+			fmt.Print(" ")
+		}
+
+		if nbr >= 33 && nbr <= 126 {
+			str += string(rune(nbr))
+		} else {
+			str += "."
+		}
+	}
+	fmt.Println(str + strings.Repeat(".", 10-len(a)))
+}
+
+
+===== findprevprime (findprevprime.go) =====
+package solutions
+
+import "github.com/01-edu/go-tests/lib/is"
+
+func FindPrevPrime(nb int) int {
+	if nb < 2 {
+		return 0
+	}
+	if is.Prime(nb) {
+		return nb
+	}
+	return FindPrevPrime(nb - 1)
+}

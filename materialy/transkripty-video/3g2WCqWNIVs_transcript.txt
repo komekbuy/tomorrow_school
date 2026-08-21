@@ -1,0 +1,103 @@
+Hello there today we're here to talk about binary trees
+and to do that, Augusto, my colleague is here to show us a small introduction to binary trees, 
+and to be more precise to binary search trees, is that correct ?
+Yeah that's right
+Okay so since it's a topic that's a bit more difficult to comprehend,
+we have a view images ready to show you at the same time that the explanations is ongoing
+Well actually, would you like to tell us what it is first?
+Okay so a binary tree is basically a node with a left and a right child
+In a binary search tree specifically, it has the property that the left child is always less
+than the parent and the right child is always greater than the parent or equal
+Okay well since it might be a bit hard to picture, there is an image ready, there we go 
+No, not this one, this one, there we go yeah 
+So you can see here you have the 4 in the root, we picture the trees as an inverted tree
+so the root is on the top and the leaves are on the bottom and you see the 4 in the root,
+then you have to the left the 2, the node with the with a value 2, that is less than the 4, that
+is a parent, and you have 
+the 6, the right child of the 4 because is greater
+than the 4. This data 
+structure is really useful for doing searches, optimal searches
+So let's say I was looking for number 3, so can you explain  like the process?
+Ok so if you're going for the 
+3, you start in the root and then you will compare  
+the value that you're looking for with the root. 3 is less than 4, so you already know that  
+you don't need the right subtree, so you go to the left, you found the 2 and you know that  
+the 3 is right to the 2, so you forget 
+about the left child 2. Then you arrive
+ to the 3. So you can see the number of comparisons that you had to do to find the 3 was
+much less than if you had to to compare with each node of the tree. That's the
+important thing to remember with binary search trees
+So if, for example, now if I were to look for the 7, I will always go to the right, is that correct? 
+Yeah exactly. For the 7 you will compare it with the 4, 7 is bigger than 4 then you go to right 
+you find the 6. 7 is bigger than 6 then you go to the right, and then your find the 7
+You ignore more than half of the tree, so that's really powerful 
+Alright so now, if you don't mind, can you show us what it looks like in the code, in a program
+Yeah of course, I will show. So I will open the terminal first
+We'll give more space. So we 
+start with a package main, we define the type
+first, type node. There is a structure,
+we already said that we have a left and right child
+Those are pointers to node to. Each node has a data element and in this case we will use an
+int, but you can use any other data type. Now we are going to define a function  
+to do the insertion. You define it 
+as insert. This receives the root node of  
+the tree. This pointer to node, and the 
+element you want to insert. And we return  
+a node pointer to a node. For this 
+example, I will use recursivity, but you
+can use loops as well. So, we think if the root is new  
+then we return a new node with the datatype as the element. So we define the address of the node with  
+the data element, equal to the element 
+In other case, you will compare the element that you want to insert with the 
+data in the root. So if the element 
+is less than the data in the root, you go  
+left to the node. So the left child 
+of the root is the result of the insertion in the  
+left child of the element 
+Okay, and then you do the 
+other one, the other case for the return
+If they are symmetrical is exactly the same line as before just switching left for right
+And after this we only have to return the root. And that's it for the insertion 
+I think so. Now, before we continue, 
+we will define a printing function, so we  
+can print the tree.
+So we can see what we're doing
+Exactly. So this function receives the tree node, the root node
+If the root node is new, we 
+don't do anything we just return it
+Then we do fmt.Println of the data in the root, we bring the data
+and then, we use recursivity 
+again, to print the left child
+and then we bring the right child
+And that's it for this function. Now we will use we will write the main for testing these functions
+We will use the example on the image, you connect up the same tree
+Exactly, just to be sure to show. So we 
+define the root and then we insert the root value
+Now, you're going to insert the values 
+on each node right now, right? The order has its importance
+Yeah the order is important 
+because to keep the same structure it has to be  
+somewhat in the same order we find in the tree so each level has to be in the same order
+For the root first we insert 4 to define the root node, but for the next step we can insert either  
+the 2 or the 6 and the root will keep its 
+form. So in this case, I will introduce  
+first the 2 and then I will introduce the 6. Next level, we have four choices  
+we can either insert 1, 3, 5 or 7 in any order yeah
+so we introduce the 3 first
+then the 5
+The 7 
+Then the one, exactly. And after this 
+we print the tree. Now you can save it go to
+the terminal and go run. Okay, so we have the output here. So you can see here the  
+order in which it was printed has to be with the way we defined the printing functions  
+So we gave priority after the root, so we bring first the root, then we go to the left and at  
+the end at last we print the right and we can see here that we print the root, then the left  
+sub-tree and in the end the right sub-tree  
+The left was privatised by your printing functions
+Exactly, in this case, but there's many ways to print trees so,
+but you can change this function. You need to adapt it depending on the exercise  
+Well thank you Augusto, that wasn't 
+something easy to explain but that's actually a  
+pretty good introduction I believe. And good luck to the ones who are going to take upon  
+that challenge and all those exercises.
+We'll see you next time, thank you for watching

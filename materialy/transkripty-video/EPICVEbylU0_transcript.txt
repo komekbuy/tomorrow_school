@@ -1,0 +1,112 @@
+hello there today I'm here with my
+colleague early in order to do a small
+introduction to link lists so now that
+those are those are going to be
+exercises are going to be a bit more of
+a challenge but we believe now that you
+have the tools to face a challenge in
+order to put you on the rails to put you
+on the road we we decided to do that
+small introduction or more precisely is
+going to do the small introduction is
+going to explain what a link list is and
+then is going to show us a small example
+with the code rightly so what so what
+sneaky link list is a linear data
+structure in simple words a linked list
+consists of nodes where each node
+contains data that it can be an int a
+string or even an interface and it
+reference link a next node so a pointer
+to the next node as we can see in the
+example we we have a node in this case
+with the data that's three and a pointer
+to the next node and so on okay so if we
+want to insert one what happens yeah if
+you want to insert when we basically
+grab the pointer to the pointer of the
+node and point to the to the data to the
+our and then the first element of the
+note okay this is not a must you don't
+have to do always at the first element
+of the node there are other ways to
+insert that data right it's not
+mandatory yeah you can insert it in the
+end of the list or in the middle of the
+list the beginning of the list
+there are several ways you can insert
+them
+and okay but today you're gonna show us
+that example yeah today we're going to
+show the first insert the insert in the
+first list okay so let's switch back to
+code I guess and shorts if you don't
+mind so let's create drama no okay so
+[Music]
+okay sorry my keyboard is the British
+okay
+so we have to initialize the note in the
+note it's a structure okay so no so
+first you define the links of the chain
+first we define the note then we'll
+define the links so we have data that's
+named in this case and a pointer that's
+next that points to the next node okay
+so if one inserts let's create a
+function to insert a list so we have we
+have
+to have a pointer to the know and other
+data we want to insert that's named and
+we have to return our node so we have to
+initialize a node let's say and equals
+let's put node and our data inside
+nature so if the first position of the
+the list equals to new these guys know
+it will return I will not look at our
+node else else it will and our node so
+annoyed but appointed to the next will
+point to the head to the end of the list
+and then does it return the yeah okay
+so we want to see the link list that's
+the function to print it so print the
+list it will have a spiral to the
+appointed to the note to the link West
+and I'd say we we have to interact every
+position of the list so we have to the
+before the header is different all the
+header is different from new oh yeah we
+have to print the list so print each
+note this case will be and thought our
+date time and that's to be more clear
+let's add your earnest of a link okay so
+we have to advertise the head every time
+and book equal to head dot next and just
+to be visualize the tail of
+the list will print
+but that's just for the last class one
+less yeah okay so that's really pretty
+much bigger so let's initialize the link
+that's a pointer to the node and it's
+such that that's insert let's insert in
+the link link the data very much okay so
+let's lock the image let's insert just
+the one - you didn't say free and let's
+print it so first okay that one so if we
+run this should
+okay so okay so this is a linked list
+I know if we do it exactly like the
+images actually on-screen I add another
+one right the fourth one and this will
+work
+all right so that's that little program
+does the job so what we have here is one
+function for printing the list one
+function for inserting the nuts and a
+structure to define the type of nuts
+okay okay well so actually as you can
+see it's it gets a bit more complicated
+than previous videos but we invite you
+to watch it again and again and find
+more resources online and good luck for
+all the exercises thank you for watching
+and thank you again

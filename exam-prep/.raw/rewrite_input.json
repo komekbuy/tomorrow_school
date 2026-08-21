@@ -1,0 +1,314 @@
+{
+ "notdecimal": {
+  "kind": "function",
+  "prototype": "func NotDecimal(dec string) string {\n\n}",
+  "statement_ru": "Функция получает строку, в которой записано дробное число с точкой, и возвращает строку — то же число, но без точки (то есть умноженное на 10 в степени «сколько цифр после точки»). Ведущие нули результата убираются: \"0.1\" даёт \"1\". Если аргумент пустой — вернуть \"\\n\". Если в строке нет точки, или после точки одни нули, или строка вообще не число — вернуть саму эту строку. Ответ во всех случаях заканчивается \"\\n\".",
+  "code": "package piscine\n\nimport (\n\t\"math\"\n\t\"strconv\"\n)\n\nfunc NotDecimal(dec string) string {\n\tj := -1\n\tn := 0\n\tif len(dec) == 0 {\n\t\treturn \"\\n\"\n\t}\n\tfor i := 0; i < len(dec); i++ {\n\t\tif j == -1 && dec[i] == '.' {\n\t\t\tj++\n\t\t} else if j == 0 {\n\t\t\tn++\n\t\t}\n\t}\n\ts, err := strconv.ParseFloat(dec, 64)\n\tif err == nil {\n\t\treturn strconv.Itoa(int(s*math.Pow(10, float64(n)))) + \"\\n\"\n\t}\n\treturn (dec + \"\\n\")\n}\n"
+ },
+ "brainfuck": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать интерпретатор эзотерического языка Brainfuck. Исходный код программы на Brainfuck приходит первым аргументом командной строки и всегда корректен, операций меньше 4096. Внутри интерпретатора — массив из 2048 байт, все нули, и указатель, который в начале стоит на первом байте. Восемь команд: `>` `<` двигают указатель, `+` `-` меняют байт под указателем, `.` печатает этот байт в стандартный вывод, `[` и `]` образуют цикл. Любой другой символ — комментарий, его надо просто пропустить. Если аргумента нет — программа не печатает ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nconst SIZE = 2048\n\nfunc main() {\n\tif len(os.Args) != 2 {\n\t\treturn\n\t}\n\tprogpoint := []byte(os.Args[1])\n\tvar arby [SIZE]byte\n\tpos := 0\n\topenBr := 0         // opened brackets\n\ti := 0              // iterates through the source code passed in the argument\n\tN := len(progpoint) // length of the source code\n\tfor i >= 0 && i < N {\n\t\tswitch progpoint[i] {\n\t\tcase '>':\n\t\t\t// Increment the pointer\n\t\t\tpos++\n\t\tcase '<':\n\t\t\t// decrement the pointes\n\t\t\tpos--\n\t\tcase '+':\n\t\t\t// increment the pointed byte\n\t\t\tarby[pos]++\n\t\tcase '-':\n\t\t\t// decrement the pointed byte\n\t\t\tarby[pos]--\n\t\tcase '.':\n\t\t\t// print the pointed byte on std output\n\t\t\tfmt.Printf(\"%c\", rune(arby[pos]))\n\t\tcase '[':\n\t\t\t// go to the matching ']' if the pointed byte is 0 (while start)\n\t\t\topenBr = 0\n\t\t\tif arby[pos] == 0 {\n\t\t\t\tfor i < N && (progpoint[i] != byte(']') || openBr > 1) {\n\t\t\t\t\tif progpoint[i] == byte('[') {\n\t\t\t\t\t\topenBr++\n\t\t\t\t\t} else if progpoint[i] == byte(']') {\n\t\t\t\t\t\topenBr--\n\t\t\t\t\t}\n\t\t\t\t\ti++\n\t\t\t\t}\n\t\t\t}\n\t\tcase ']':\n\t\t\t// go to the matching '[' if the pointed byte is not 0 (while end)\n\t\t\topenBr = 0\n\t\t\tif arby[pos] != 0 {\n\t\t\t\tfor i >= 0 && (progpoint[i] != byte('[') || openBr > 1) {\n\t\t\t\t\tif progpoint[i] == byte(']') {\n\t\t\t\t\t\topenBr++\n\t\t\t\t\t} else if progpoint[i] == byte('[') {\n\t\t\t\t\t\topenBr--\n\t\t\t\t\t}\n\t\t\t\t\ti--\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\ti++\n\t}\n}\n"
+ },
+ "cleanstr": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает из командной строки одну строку и печатает её «чистой»: между словами ровно один пробел, в начале и в конце пробелов и табов нет, в конце добавляется перевод строки. Словом считается кусок строки между пробелами/табами (или между началом/концом строки и пробелом). Если аргументов не ровно один, либо слов в строке нет вообще, программа печатает просто перевод строки.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"regexp\"\n\t\"strings\"\n)\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\tre := regexp.MustCompile(`( +)`)\n\t\tfmt.Print(re.ReplaceAllString(strings.Trim(os.Args[1], \" \"), \" \"))\n\t}\n\tfmt.Println()\n}\n"
+ },
+ "revwstr": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает одну строку аргументом и печатает её слова в обратном порядке, через один пробел, а в конце — перевод строки. Если аргументов не ровно один, программа не печатает вообще ничего, даже перевода строки. README обещает, что в проверяемых строках лишних пробелов не будет: ни по краям, ни двойных между словами.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\ta := strings.Split(os.Args[1], \" \")\n\t\tfor i := len(a) - 1; i >= 0; i-- {\n\t\t\tfmt.Print(a[i])\n\t\t\tif i != 0 {\n\t\t\t\tfmt.Print(\" \")\n\t\t\t}\n\t\t}\n\t\tfmt.Println()\n\t}\n}\n"
+ },
+ "wordflip": {
+  "kind": "function",
+  "prototype": "func WordFlip(str string) string {\n\n}",
+  "statement_ru": "Нужна функция WordFlip, которая принимает строку и ВОЗВРАЩАЕТ (не печатает) её слова в обратном порядке, с переводом строки \\n в конце. Если переданная строка пустая, функция возвращает \"Invalid Output\" (тоже с переводом строки). Несколько пробелов подряд между словами схлопываются в один, пробелы по краям обрезаются. Отдельный тонкий случай из примера README: строка из одних пробелов пустой не считается, поэтому для неё возвращается не \"Invalid Output\", а просто перевод строки.",
+  "code": "package piscine\n\nimport \"strings\"\n\nfunc WordFlip(arg string) string {\n\tif arg == \"\" {\n\t\treturn \"Invalid Output\\n\"\n\t}\n\tvar str []string = strings.Split(arg, \" \")\n\t_len := len(str)\n\tvar str1 string\n\tfor i := _len - 1; i >= 0; i-- {\n\t\tif len(str[i]) != 0 {\n\t\t\tstr1 += str[i]\n\t\t}\n\t\tif i > 0 && len(str[i-1]) != 0 {\n\t\t\tstr1 += \" \"\n\t\t}\n\t}\n\treturn (strings.TrimSpace(str1) + \"\\n\")\n}\n"
+ },
+ "itoa": {
+  "kind": "function",
+  "prototype": "func Itoa(n int) string {\n\n}",
+  "statement_ru": "Нужна функция, которая делает то же, что стандартная strconv.Itoa: превращает целое число в строку с его записью. Например, число 12345 превращается в строку «12345». Знак минус обязательно должен учитываться: число -1234 превращается в строку «-1234». Пользоваться готовой strconv.Itoa нельзя, надо написать преобразование самому.",
+  "code": "package piscine\n\nimport \"strconv\"\n\nvar Itoa = strconv.Itoa\n"
+ },
+ "itoabase": {
+  "kind": "function",
+  "prototype": "func ItoaBase(value, base int) string {\n\n}",
+  "statement_ru": "Написать функцию, которая переводит целое число в строку в системе счисления с указанным основанием и возвращает эту строку. Основание — int от 2 до 16. Цифры системы: 0-9, дальше ЗАГЛАВНЫЕ буквы A-F. То есть основание 4 — это набор \"0123\", основание 16 — \"0123456789ABCDEF\". Если число отрицательное, перед результатом ставится минус. Тестируются только корректные входные данные.",
+  "code": "package piscine\n\nimport (\n\t\"strconv\"\n\t\"strings\"\n)\n\nfunc ItoaBase(value, base int) string {\n\tif base < 2 || base > 16 {\n\t\treturn \"\"\n\t}\n\n\treturn strings.ToUpper(strconv.FormatInt(int64(value), base))\n}\n"
+ },
+ "hiddenp": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает два аргумента командной строки — строки s1 и s2. Надо проверить, «спрятана» ли s1 внутри s2: каждый символ s1 должен найтись в s2 в том же порядке, но не обязательно подряд. Если спрятана — вывести 1 и перевод строки, если нет — 0 и перевод строки. Пустая s1 считается спрятанной в любой строке. Если аргументов не ровно два — программа не выводит ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tvar i int\n\tif len(os.Args) != 3 {\n\t\treturn\n\t}\n\tfor _, r := range os.Args[1] {\n\t\tj := strings.Index(os.Args[2][i:], string(r))\n\t\tif j == -1 {\n\t\t\tfmt.Println(\"0\")\n\t\t\treturn\n\t\t}\n\t\ti += j + 1\n\t}\n\tfmt.Println(\"1\")\n}\n"
+ },
+ "fifthandskip": {
+  "kind": "function",
+  "prototype": "func FifthAndSkip(str string) string {\n\n}",
+  "statement_ru": "Функция получает строку и возвращает новую строку. Все пробелы из исходной строки выбрасываются, а оставшиеся символы режутся на группы по 5 штук, при этом каждый шестой символ выбрасывается тоже. Группы склеиваются между собой ровно одним пробелом. Если строка пустая — вернуть только перевод строки \"\\n\"; если в ней меньше 5 символов — вернуть \"Invalid Input\\n\"; в обычном случае в конец результата тоже добавляется \"\\n\".",
+  "code": "package piscine\n\nimport \"strings\"\n\nfunc FifthAndSkip(str string) string {\n\tif str == \"\" {\n\t\treturn \"\\n\"\n\t}\n\tif len(str) < 5 {\n\t\treturn \"Invalid Input\\n\"\n\t}\n\ts := strings.ReplaceAll(str, \" \", \"\")\n\tvar _str strings.Builder\n\tj := 0\n\tfor _, char := range s {\n\t\tif j == 5 {\n\t\t\t_str.WriteRune(rune(' '))\n\t\t\tj = 0\n\t\t} else {\n\t\t\t_str.WriteRune(rune(char))\n\t\t\tj++\n\t\t}\n\t}\n\t_str.WriteRune('\\n')\n\treturn _str.String()\n}\n"
+ },
+ "printmemory": {
+  "kind": "function",
+  "prototype": "func PrintMemory(arr [10]byte) {\n\n}",
+  "statement_ru": "Функция получает массив ровно из 10 байтов и печатает его содержимое так, как оно лежит в памяти. Сначала идёт шестнадцатеричный дамп: каждый байт — двумя маленькими шестнадцатеричными цифрами, по 4 байта в строке, байты внутри строки разделены одним пробелом. Так как 10 на 4 нацело не делится, последняя строка дампа содержит только 2 байта. После дампа печатается ещё одна строка: те же 10 байтов как символы, причём непечатаемые символы заменяются точкой. Каждая строка вывода заканчивается переводом строки.",
+  "code": "package piscine\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\nfunc PrintMemory(a [10]byte) {\n\tstr := \"\"\n\tfor i, nbr := range a {\n\t\tfmt.Printf(\"%.2x\", nbr)\n\n\t\tif ((i+1)%4 == 0 && i != 0) || i == len(a)-1 {\n\t\t\tfmt.Println()\n\t\t} else {\n\t\t\tfmt.Print(\" \")\n\t\t}\n\n\t\tif nbr >= 33 && nbr <= 126 {\n\t\t\tstr += string(rune(nbr))\n\t\t} else {\n\t\t\tstr += \".\"\n\t\t}\n\t}\n\tfmt.Println(str + strings.Repeat(\".\", 10-len(a)))\n}\n"
+ },
+ "searchreplace": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать программу, которая получает ровно 3 аргумента командной строки: строку, символ который надо найти, и символ на который его надо заменить. Программа печатает строку, где все вхождения искомого символа заменены, и в конце ставит перевод строки. Если аргументов не ровно 3 — программа не печатает вообще ничего. Если искомого символа в строке нет — строка печатается как есть, тоже с переводом строки в конце.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tif len(os.Args) == 4 {\n\t\tfmt.Println(strings.Map(func(r rune) rune {\n\t\t\tif r == []rune(os.Args[2])[0] {\n\t\t\t\treturn []rune(os.Args[3])[0]\n\t\t\t}\n\t\t\treturn r\n\t\t}, os.Args[1]))\n\t}\n}\n"
+ },
+ "chunk": {
+  "kind": "function",
+  "prototype": "func Chunk(slice []int, size int) {\n\n}",
+  "statement_ru": "Функция получает срез целых чисел и число size. Надо разрезать срез на подсрезы длиной size каждый и напечатать получившийся срез срезов. Последний кусок может быть короче остальных, если элементы не делятся нацело. Если size равен 0, функция печатает просто перевод строки. Функция ничего не возвращает — она печатает сама.",
+  "code": "package piscine\n\nimport \"fmt\"\n\nfunc Chunk(a []int, ch int) {\n\tvar slice []int\n\tif ch <= 0 {\n\t\tfmt.Println()\n\t\treturn\n\t}\n\tresult := make([][]int, 0, len(a)/ch+1)\n\tfor len(a) >= ch {\n\t\tslice, a = a[:ch], a[ch:]\n\t\tresult = append(result, slice)\n\t}\n\tif len(a) > 0 {\n\t\tresult = append(result, a[:])\n\t}\n\tfmt.Println(result)\n}\n"
+ },
+ "checknumber": {
+  "kind": "function",
+  "prototype": "func CheckNumber(arg string) bool {\n}",
+  "statement_ru": "Написать функцию, которая получает строку и возвращает true, если внутри строки есть хотя бы одна цифра. Если цифр нет — вернуть false. Ничего печатать не надо, функция только возвращает логическое значение. В примере \"Hello\" даёт false, а \"Hello1\" — true.",
+  "code": "package piscine\n\nfunc CheckNumber(str string) bool {\n\tfor _, c := range str {\n\t\tif c >= '0' && c <= '9' {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}\n"
+ },
+ "concatalternate": {
+  "kind": "function",
+  "prototype": "func ConcatAlternate(slice1,slice2 []int) []int {\n\n}",
+  "statement_ru": "Функция получает два среза целых чисел и возвращает новый срез, в котором элементы идут по очереди: один из первого, один из второго, снова из первого и так далее. Срезы могут быть разной длины. Начинать надо с элемента более длинного среза; при равных длинах первым идёт элемент первого аргумента. Хвост более длинного среза, которому уже нет пары, дописывается в конец подряд.",
+  "code": "package piscine\n\nfunc ConcatAlternate(slice1, slice2 []int) []int {\n\tvar result []int\n\n\tif len(slice1) < len(slice2) {\n\t\tslice1, slice2 = slice2, slice1\n\t}\n\tfor i, v := range slice1 {\n\t\tresult = append(result, v)\n\t\tif i < len(slice2) {\n\t\t\tresult = append(result, slice2[i])\n\t\t}\n\t}\n\treturn result\n}\n"
+ },
+ "iscapitalized": {
+  "kind": "function",
+  "prototype": "func IsCapitalized(s string) bool {\n\n}",
+  "statement_ru": "Нужна функция, которая получает строку и отвечает true, если каждое слово в ней начинается либо с заглавной латинской буквы, либо с символа, не являющегося буквой (цифра, восклицательный знак и так далее). Если хотя бы одно слово начинается со строчной буквы — ответ false. Для пустой строки ответ тоже false. Слова разделяются пробелами.",
+  "code": "package piscine\n\nfunc IsCapitalized(s string) bool {\n\tif len(s) == 0 {\n\t\treturn false\n\t}\n\n\tfor i := 0; i < len(s); i++ {\n\t\tif s[i] >= 'a' && s[i] <= 'z' && i != 0 && s[i-1] == ' ' {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn !(s[0] >= 'a' && s[0] <= 'z')\n}\n"
+ },
+ "lastword": {
+  "kind": "function",
+  "prototype": "func LastWord(s string) string{\n\n}",
+  "statement_ru": "Написать функцию LastWord, которая берёт строку и возвращает её последнее слово, а сразу за ним символ перевода строки \\n. Словом считается кусок строки между пробелами, а также между началом строки и пробелом или между пробелом и концом строки. Лишние пробелы в начале и в конце игнорируются. Если слов в строке нет вообще (строка пустая или состоит из одних пробелов), вернуть просто \"\\n\".",
+  "code": "package piscine\n\nimport (\n\t\"strings\"\n)\n\nfunc LastWord(s string) string {\n\twords := strings.Fields(s)\n\tif len(words) > 0 {\n\t\treturn words[len(words)-1] + \"\\n\"\n\t}\n\treturn \"\\n\"\n}\n"
+ },
+ "reversestrcap": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает один или несколько аргументов. Каждый аргумент надо преобразовать так: последняя буква каждого слова становится заглавной, все остальные буквы — строчными. Результат по каждому аргументу печатается отдельной строкой, с переводом строки в конце. Если аргументов нет, программа не печатает ничего. Слово — это кусок текста между пробелами (пример \"IT'S\" -> \"it'S\" из README показывает, что апостроф границей слова не считается).",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"unicode\"\n)\n\nfunc main() {\n\tfor _, arg := range os.Args[1:] {\n\t\targ := []rune(arg)\n\t\tfor j, r := range arg {\n\t\t\tif j+1 == len(arg) || arg[j+1] == ' ' {\n\t\t\t\targ[j] = unicode.ToUpper(r)\n\t\t\t} else {\n\t\t\t\targ[j] = unicode.ToLower(r)\n\t\t\t}\n\t\t}\n\t\tfmt.Println(string(arg))\n\t}\n}\n"
+ },
+ "repeatalpha": {
+  "kind": "function",
+  "prototype": "func RepeatAlpha(s string) string {\n}",
+  "statement_ru": "Написать функцию RepeatAlpha, которая берёт строку и возвращает новую, где каждая буква латинского алфавита повторена столько раз, каков её порядковый номер в алфавите: 'a' один раз, 'b' два, 'e' пять, 'z' двадцать шесть. Для заглавных букв номер считается по той же шкале от 'A', и повторяется именно заглавная буква: 'C' превращается в 'CCC'. Все остальные символы — цифры, пробелы, знаки препинания — переписываются один раз без изменений.",
+  "code": "package piscine\n\nimport \"unicode\"\n\nfunc RepeatAlpha(s string) string {\n\tres := \"\"\n\tfor _, r := range s {\n\t\tif unicode.IsLetter(r) {\n\t\t\trep := unicode.ToLower(r) - 'a' + 1\n\t\t\tfor i := 0; i < int(rep); i++ {\n\t\t\t\tres += string(r)\n\t\t\t}\n\t\t} else {\n\t\t\tres += string(r)\n\t\t}\n\t}\n\treturn res\n}\n"
+ },
+ "revconcatalternate": {
+  "kind": "function",
+  "prototype": "func RevConcatAlternate(slice1,slice2 []int) []int {\n\n}",
+  "statement_ru": "Функция получает два среза целых чисел и возвращает новый срез. Оба исходных читаются с конца к началу. Пока один срез длиннее другого, в ответ идут только его «лишние» элементы. Как только остатки сравнялись по длине, элементы берутся по очереди: сначала из первого среза, потом из второго, и так до конца. Если срезы были равной длины с самого начала, чередование начинается с первого среза.",
+  "code": "package piscine\n\nfunc RevConcatAlternate(slice1, slice2 []int) []int {\n\tlen1 := len(slice1)\n\tlen2 := len(slice2)\n\tmaxLen := len1\n\tresult := make([]int, 0, len1+len2)\n\n\tif len2 > maxLen {\n\t\tmaxLen = len2\n\t}\n\n\tfor i := maxLen; i >= 0; i-- {\n\t\tif i < len1 {\n\t\t\tresult = append(result, slice1[i])\n\t\t}\n\t\tif i < len2 {\n\t\t\tresult = append(result, slice2[i])\n\t\t}\n\t}\n\n\treturn result\n}\n"
+ },
+ "concatslice": {
+  "kind": "function",
+  "prototype": "func ConcatSlice(slice1, slice2 []int) []int {\n\n}",
+  "statement_ru": "Функция получает два среза целых чисел и возвращает новый срез: сначала все элементы первого среза в исходном порядке, потом все элементы второго. Ничего не пропускать, не сортировать и не менять порядок. Любой из срезов может быть пустым.",
+  "code": "package piscine\n\nfunc ConcatSlice(slice1, slice2 []int) []int {\n\tvar result []int\n\tfor _, v := range slice1 {\n\t\tresult = append(result, v)\n\t}\n\tfor _, v := range slice2 {\n\t\tresult = append(result, v)\n\t}\n\treturn result\n}\n"
+ },
+ "countalpha": {
+  "kind": "function",
+  "prototype": "func CountAlpha(s string) int {\n\n}",
+  "statement_ru": "Написать функцию CountAlpha(), которая получает строку и возвращает количество букв в ней. Буквы — это латинские a-z и A-Z. Пробелы, цифры и знаки препинания не считаются. По примерам: \"Hello world\" даёт 10 (пробел не считается), \"H e l l o\" даёт 5, \"H1e2l3l4o\" даёт 5.",
+  "code": "package piscine\n\nfunc CountAlpha(s string) int {\n\tcount := 0\n\tfor _, c := range s {\n\t\tif c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' {\n\t\t\tcount++\n\t\t}\n\t}\n\treturn count\n}\n"
+ },
+ "gcd": {
+  "kind": "function",
+  "prototype": "func Gcd(a, b uint) uint {\n\n}",
+  "statement_ru": "Функция получает два числа типа uint (беззнаковое целое, то есть неотрицательное) и возвращает их наибольший общий делитель — самое большое число, на которое делятся нацело оба. Если хотя бы одно из чисел равно нулю, функция возвращает 0.",
+  "code": "package piscine\n\nfunc Gcd(a, b uint) uint {\n\tfor a != b {\n\t\tif a > b {\n\t\t\ta -= b\n\t\t} else {\n\t\t\tb -= a\n\t\t}\n\t}\n\treturn a\n}\n"
+ },
+ "passwordentropy": {
+  "kind": "function",
+  "prototype": "func Entropy(password string) float64 {",
+  "statement_ru": "Функция получает пароль и возвращает его энтропию — числовую оценку стойкости. Считается так: смотрим, символы каких видов встретились в пароле — строчные буквы, заглавные буквы, цифры, прочие знаки. За каждый встреченный вид к размеру набора прибавляется своё число: 26 за строчные, 26 за заглавные, 10 за цифры, 32 за прочие. Каждый вид засчитывается один раз, сколько бы символов этого вида ни было. Затем энтропия равна длине пароля, умноженной на двоичный логарифм размера набора. Для пустого пароля возвращается ноль.",
+  "code": "package piscine\n\nimport (\n\t\"math\"\n\t\"unicode\"\n)\n\nfunc Entropy(password string) float64 {\n\tconst (\n\t\tlowerBit = 1 << iota\n\t\tupperBit\n\t\tdigitBit\n\t\tspecialBit\n\t)\n\n\tused := 0\n\tpoolSize := 0.0\n\n\tfor _, r := range password {\n\t\tif used&lowerBit == 0 && unicode.IsLower(r) {\n\t\t\tused |= lowerBit\n\t\t\tpoolSize += 26\n\t\t} else if used&upperBit == 0 && unicode.IsUpper(r) {\n\t\t\tused |= upperBit\n\t\t\tpoolSize += 26\n\t\t} else if used&digitBit == 0 && unicode.IsDigit(r) {\n\t\t\tused |= digitBit\n\t\t\tpoolSize += 10\n\t\t} else if used&specialBit == 0 && !unicode.IsLetter(r) && !unicode.IsDigit(r) {\n\t\t\tused |= specialBit\n\t\t\tpoolSize += 32\n\t\t}\n\n\t\tif used == lowerBit|upperBit|digitBit|specialBit {\n\t\t\tbreak\n\t\t}\n\t}\n\n\tif poolSize == 0 {\n\t\treturn 0\n\t}\n\n\treturn float64(len(password)) * math.Log2(poolSize)\n}\n"
+ },
+ "saveandmiss": {
+  "kind": "function",
+  "prototype": "func SaveAndMiss(arg string, num int) string {\n\n}",
+  "statement_ru": "Функция SaveAndMiss получает строку и целое число num. Строка мысленно режется на куски длиной num подряд идущих символов: первый кусок сохраняем, второй пропускаем, третий сохраняем, четвёртый пропускаем и так до конца строки. Возвращаем строку, собранную из сохранённых символов. Если num равен нулю или отрицателен, функция возвращает исходную строку без изменений.",
+  "code": "package piscine\n\nfunc SaveAndMiss(arg string, num int) string {\n\tif num <= 0 || num > len(arg) {\n\t\treturn string(arg)\n\t}\n\t_str := \"\"\n\tfor i := 0; i < len(arg); i++ {\n\t\tif i != 0 && i%num == 0 {\n\t\t\ti += num\n\t\t\tif i > len(arg)-1 {\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tif i != len(arg) {\n\t\t\t_str += string(rune(arg[i]))\n\t\t}\n\t}\n\treturn _str\n}\n"
+ },
+ "thirdtimeisacharm": {
+  "kind": "function",
+  "prototype": "func ThirdTimeIsACharm(str string) string {\n\n}",
+  "statement_ru": "Функция получает строку и возвращает новую строку, собранную из каждого третьего символа исходной: третьего, шестого, девятого и так далее. К результату всегда дописывается перевод строки. Если строка пустая — возвращается просто перевод строки. Если третьего символа нет (строка короче трёх символов) — тоже просто перевод строки.",
+  "code": "package piscine\n\nimport \"strings\"\n\nfunc ThirdTimeIsACharm(arg string) string {\n\tif arg == \"\" || len(arg) < 3 {\n\t\treturn \"\\n\"\n\t}\n\tvar str strings.Builder\n\tfor i := 0; i < len(arg); i++ {\n\t\tif i == 0 {\n\t\t\tcontinue\n\t\t}\n\t\tj := i + 1\n\t\tif j%3 == 0 {\n\t\t\tstr.WriteRune(rune(arg[i]))\n\t\t}\n\t}\n\tstr.WriteRune(rune('\\n'))\n\treturn (str.String())\n}\n"
+ },
+ "addprimesum": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает ровно один аргумент командной строки — положительное целое число. Надо сложить все простые числа, которые меньше или равны этому числу, и напечатать сумму, а после неё перевод строки. Если аргументов не ровно один, либо аргумент не является положительным числом, программа печатает 0 и перевод строки. Пример: для 5 ответ 10 (2+3+5), для 7 ответ 17 (2+3+5+7).",
+  "code": "package main\n\nimport \"os\"\n\nfunc atoi(s string) (int, bool) {\n\tif len(s) == 0 {\n\t\treturn 0, false\n\t}\n\tn := 0\n\tfor i := 0; i < len(s); i++ {\n\t\tif s[i] < '0' || s[i] > '9' {\n\t\t\treturn 0, false\n\t\t}\n\t\tn = n*10 + int(s[i]-'0')\n\t}\n\treturn n, true\n}\n\nfunc itoa(n int) string {\n\tif n == 0 {\n\t\treturn \"0\"\n\t}\n\tresult := \"\"\n\tfor n > 0 {\n\t\tresult = string(rune('0'+n%10)) + result\n\t\tn /= 10\n\t}\n\treturn result\n}\n\nfunc isPrime(n int) bool {\n\tif n < 2 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= n; i++ {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc main() {\n\tif len(os.Args) != 2 {\n\t\tos.Stdout.WriteString(\"0\\n\")\n\t\treturn\n\t}\n\tn, ok := atoi(os.Args[1])\n\tif !ok || n <= 0 {\n\t\tos.Stdout.WriteString(\"0\\n\")\n\t\treturn\n\t}\n\tsum := 0\n\tfor i := 2; i <= n; i++ {\n\t\tif isPrime(i) {\n\t\t\tsum += i\n\t\t}\n\t}\n\tos.Stdout.WriteString(itoa(sum) + \"\\n\")\n}\n"
+ },
+ "findprevprime": {
+  "kind": "function",
+  "prototype": "func FindPrevPrime(nb int) int {\n\n}",
+  "statement_ru": "Нужна функция, которая получает целое число и возвращает ближайшее простое число, меньшее или равное этому числу. То есть само число тоже подходит, если оно простое. Если простых чисел, меньших или равных переданному, не существует, функция возвращает 0.",
+  "code": "package piscine\n\nfunc findprevprimeIsPrime(nb int) bool {\n\tif nb < 2 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= nb; i++ {\n\t\tif nb%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc FindPrevPrime(nb int) int {\n\tfor n := nb; n >= 2; n-- {\n\t\tif findprevprimeIsPrime(n) {\n\t\t\treturn n\n\t\t}\n\t}\n\treturn 0\n}\n"
+ },
+ "printif": {
+  "kind": "function",
+  "prototype": "func PrintIf(str string) string {\n\n}",
+  "statement_ru": "Написать функцию, которая получает строку и возвращает строку \"G\" с переводом строки в конце, если длина аргумента больше или равна 3. Иначе вернуть \"Invalid Input\" с переводом строки. Отдельное правило: для пустой строки тоже вернуть \"G\" с переводом строки. Функция ничего не печатает сама — она возвращает текст, а печатает его вызывающая программа.",
+  "code": "package piscine\n\nfunc PrintIf(arg string) string {\n\tif len(arg) != 0 && len(arg) < 3 {\n\t\treturn \"Invalid Input\\n\"\n\t}\n\treturn \"G\\n\"\n}\n"
+ },
+ "printrevcomb": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа печатает одной строкой все трёхзначные комбинации из трёх разных цифр, в которых первая цифра больше второй, а вторая больше третьей. Комбинации идут в порядке убывания: от 987 до 210. Между комбинациями стоит запятая и пробел, после последней комбинации разделителя нет. Строка заканчивается переводом строки. Всего таких комбинаций 120.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfor a := 9; a >= 2; a-- {\n\t\tfor b := a - 1; b >= 1; b-- {\n\t\t\tfor c := b - 1; c >= 0; c-- {\n\t\t\t\tfmt.Printf(\"%d%d%d\", a, b, c)\n\t\t\t\tif a+b+c != 3 {\n\t\t\t\t\tfmt.Print(\", \")\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\tfmt.Println()\n}\n"
+ },
+ "retainfirsthalf": {
+  "kind": "function",
+  "prototype": "func RetainFirstHalf(str string) string {\n\n}",
+  "statement_ru": "Написать функцию RetainFirstHalf(), которая получает строку и возвращает её первую половину. Если длина строки нечётная, округлять вниз (то есть брать меньше). Если строка пустая — вернуть пустую строку. Если длина строки равна одному — вернуть саму строку. По примеру: \"Hello World\" длиной 11 даёт \"Hello\" — пять символов, а не шесть.",
+  "code": "package piscine\n\nimport \"strings\"\n\nfunc RetainFirstHalf(str string) string {\n\tif len(str) == 0 {\n\t\treturn \"\"\n\t} else if len(str) == 1 {\n\t\treturn (str)\n\t} else {\n\t\tvar res strings.Builder\n\t\ti := 0\n\t\tfor i = 0; i < int(len(str)/2); i++ {\n\t\t\tres.WriteRune(rune(str[i]))\n\t\t}\n\t\treturn res.String()\n\t}\n}\n"
+ },
+ "countrepeats": {
+  "kind": "function",
+  "prototype": "func CountRepeats(s string) string {",
+  "statement_ru": "Функция получает строку и сжимает в ней подряд идущие одинаковые символы. Каждая цепочка одинаковых символов заменяется на сам символ и число повторов. Если символ встретился подряд только один раз, число не пишется. Пустая строка возвращается как есть. Пример: AAABBC превращается в A3B2C, а ABCABC остаётся ABCABC, потому что там нет подряд идущих повторов.",
+  "code": "package piscine\n\nimport (\n\t\"strconv\"\n)\n\nfunc CountRepeats(s string) string {\n\tif s == \"\" {\n\t\treturn s\n\t}\n\n\tvar result string\n\tvar counter = 1\n\n\tfor i := 0; i < len(s); i++ {\n\t\tif i+1 < len(s) && string(s[i]) == string(s[i+1]) {\n\t\t\tcounter++\n\t\t} else {\n\t\t\tresult += string(s[i])\n\t\t\tif counter > 1 {\n\t\t\t\tresult += strconv.Itoa(counter)\n\t\t\t}\n\t\t\tcounter = 1\n\t\t}\n\t}\n\treturn result\n}\n"
+ },
+ "expandstr": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает из командной строки одну строку и печатает её так, что между словами стоит ровно три пробела, а в начале и в конце пробелов и табов нет. В конце добавляется перевод строки. Словом считается непрерывная последовательность видимых символов. Если аргументов не ровно один или слов в строке нет, программа не печатает вообще ничего — даже перевода строки.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc deleteExtraSpaces(a []string) (res []string) {\n\tfor _, v := range a {\n\t\tif v != \"\" {\n\t\t\tres = append(res, v)\n\t\t}\n\t}\n\treturn\n}\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\targ := strings.Split(os.Args[1], \" \")\n\t\targ = deleteExtraSpaces(arg)\n\t\tfmt.Println(strings.Join(arg, \"   \"))\n\t}\n}\n"
+ },
+ "firstword": {
+  "kind": "function",
+  "prototype": "func FirstWord(s string) string {\n    // ...\n}",
+  "statement_ru": "Функция получает строку и возвращает строку, содержащую первое слово из неё, к которому добавлен перевод строки (символ '\\n'). Словом считается последовательность символов, ограниченная пробелами либо началом и концом строки. Ведущие пробелы надо пропустить. Для пустой строки функция возвращает просто \"\\n\", поэтому в примере между двумя словами печатается пустая строка.",
+  "code": "package piscine\n\nimport \"strings\"\n\nfunc FirstWord(s string) string {\n\twords := strings.Fields(s)\n\tres := \"\\n\"\n\tif len(words) > 0 {\n\t\tres = words[0] + res\n\t}\n\treturn res\n}\n"
+ },
+ "fishandchips": {
+  "kind": "function",
+  "prototype": "func FishAndChips(n int) string {\n\n}",
+  "statement_ru": "Функция получает целое число и возвращает строку. Если число отрицательное — вернуть \"error: number is negative\". Если делится и на 2, и на 3 — вернуть \"fish and chips\". Если делится только на 2 — вернуть \"fish\". Если делится только на 3 — вернуть \"chips\". Если не делится ни на 2, ни на 3 — вернуть \"error: non divisible\".",
+  "code": "package piscine\n\nfunc FishAndChips(n int) string {\n\tif n < 0 {\n\t\treturn \"error: number is negative\"\n\t}\n\n\tif (n%2 == 0) && (n%3 == 0) {\n\t\treturn \"fish and chips\"\n\t}\n\tif n%2 == 0 {\n\t\treturn \"fish\"\n\t}\n\tif n%3 == 0 {\n\t\treturn \"chips\"\n\t}\n\treturn \"error: non divisible\"\n}\n"
+ },
+ "fprime": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает один аргумент — положительное целое число — и печатает его разложение на простые множители, а после него перевод строки. Множители идут по возрастанию и разделяются символом * без пробелов; повторяющиеся множители выписываются столько раз, сколько раз входят (225225 даёт 3*3*5*5*7*11*13). Если аргументов не ровно один, аргумент невалиден, или у числа нет простых множителей (это 0 и 1), программа не печатает ничего — вообще ни одного байта, даже перевода строки.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n)\n\nfunc fprime(value int) {\n\tif value == 1 {\n\t\treturn\n\t}\n\tdivisionIterator := 2\n\tfor value > 1 {\n\t\tif value%divisionIterator == 0 {\n\t\t\tfmt.Print(divisionIterator)\n\t\t\tvalue = value / divisionIterator\n\n\t\t\tif value > 1 {\n\t\t\t\tfmt.Print(\"*\")\n\t\t\t}\n\t\t\tdivisionIterator--\n\t\t}\n\t\tdivisionIterator++\n\t}\n\tfmt.Println()\n}\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\tif i, err := strconv.Atoi(os.Args[1]); err == nil {\n\t\t\tfprime(i)\n\t\t}\n\t}\n}\n"
+ },
+ "printifnot": {
+  "kind": "function",
+  "prototype": "func PrintIfNot(str string) string {\n\n}",
+  "statement_ru": "Написать функцию, которая получает строку и возвращает \"G\" с переводом строки, если длина строки меньше 3 (пустая строка сюда тоже входит). Во всех остальных случаях вернуть \"Invalid Input\" с переводом строки. Это зеркальная версия задания printif: там короткая строка была плохой, здесь наоборот.",
+  "code": "package piscine\n\nfunc PrintIfNot(arg string) string {\n\tif len(arg) >= 3 {\n\t\treturn \"Invalid Input\\n\"\n\t} else {\n\t\treturn \"G\\n\"\n\t}\n}\n"
+ },
+ "romannumbers": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать программу rn, которая переводит число, переданное аргументом, в римскую запись и печатает две строки: сначала разложение-вычисление (слагаемые через плюс, вычитательные пары в скобках, например (M-C)), затем само римское число. Предел — 4000: само 4000 уже недопустимо. При недопустимом значении (буквы вроде hello, ноль, 4000 и больше) печатается строка ERROR: cannot convert to roman digit.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n\t\"strings\"\n)\n\ntype roman struct {\n\tnum        int\n\tromanDigit string\n}\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\tnbr, err := strconv.Atoi(os.Args[1])\n\t\tif err != nil || nbr >= 4000 || nbr == 0 {\n\t\t\tfmt.Println(\"ERROR: cannot convert to roman digit\")\n\t\t\treturn\n\t\t}\n\t\tpatter := []roman{\n\t\t\t{num: 1000, romanDigit: \"M\"},\n\t\t\t{num: 900, romanDigit: \"CM\"},\n\t\t\t{num: 500, romanDigit: \"D\"},\n\t\t\t{num: 400, romanDigit: \"CD\"},\n\t\t\t{num: 100, romanDigit: \"C\"},\n\t\t\t{num: 90, romanDigit: \"XC\"},\n\t\t\t{num: 50, romanDigit: \"L\"},\n\t\t\t{num: 40, romanDigit: \"XL\"},\n\t\t\t{num: 10, romanDigit: \"X\"},\n\t\t\t{num: 9, romanDigit: \"IX\"},\n\t\t\t{num: 5, romanDigit: \"V\"},\n\t\t\t{num: 4, romanDigit: \"IV\"},\n\t\t\t{num: 1, romanDigit: \"I\"},\n\t\t}\n\t\tsumRoman, romandigit := print(nbr, patter)\n\t\tfmt.Println(strings.TrimSuffix(sumRoman, \"+\"))\n\t\tfmt.Println(romandigit)\n\t}\n}\n\nfunc print(nbr int, patter []roman) (string, string) {\n\tvar sumRomanDigit, result string\n\tfor _, v := range patter {\n\t\tfor nbr >= v.num {\n\t\t\tsumRomanDigit += v.romanDigit + \"+\"\n\t\t\tresult += v.romanDigit\n\t\t\tnbr -= v.num\n\t\t}\n\t}\n\tsumRomanDigit = formatsum(sumRomanDigit, patter)\n\treturn sumRomanDigit, result\n}\n\nfunc formatsum(a string, patter []roman) string {\n\tresult2 := strings.Split(a, \"+\")\n\n\tfor i, v := range result2 {\n\t\tif len(v) == 2 {\n\t\t\tresult2[i] = fmt.Sprintf(\"(%s-%s)\", string(result2[i][1]), string(result2[i][0]))\n\t\t}\n\t}\n\ta = strings.Join(result2, \"+\")\n\treturn a\n}\n"
+ },
+ "rpncalc": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает ровно один аргумент — строку с выражением в обратной польской записи (RPN), где оператор пишется после своих двух операндов, а операнды и операторы разделены хотя бы одним пробелом. Программа вычисляет выражение и печатает целый результат и перевод строки. Поддерживаются операторы `+`, `-`, `*`, `/`, `%`. Если строка невалидна или аргументов не ровно один, печатается `Error` и перевод строки. Лишние пробелы строку не портят. Все операнды по условию помещаются в int.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n\t\"strings\"\n)\n\nfunc deleteExtraSpaces(a []string) (res []string) {\n\tfor _, v := range a {\n\t\tif v != \"\" {\n\t\t\tres = append(res, v)\n\t\t}\n\t}\n\treturn\n}\n\nfunc main() {\n\tif len(os.Args) != 2 {\n\t\tfmt.Println(\"Error\")\n\t\treturn\n\t}\n\tvar values []int\n\top := strings.Split(os.Args[1], \" \")\n\top = deleteExtraSpaces(op)\n\tfor _, v := range op {\n\t\tval, err := strconv.Atoi(v)\n\n\t\tif err == nil {\n\t\t\tvalues = append(values, val)\n\t\t\tcontinue\n\t\t}\n\n\t\tn := len(values)\n\t\tif n < 2 {\n\t\t\tfmt.Println(\"Error\")\n\t\t\treturn\n\t\t}\n\n\t\tswitch v {\n\t\tcase \"+\":\n\t\t\tvalues[n-2] += values[n-1]\n\t\t\tvalues = values[:n-1]\n\t\tcase \"-\":\n\t\t\tvalues[n-2] -= values[n-1]\n\t\t\tvalues = values[:n-1]\n\t\tcase \"*\":\n\t\t\tvalues[n-2] *= values[n-1]\n\t\t\tvalues = values[:n-1]\n\t\tcase \"/\":\n\t\t\tvalues[n-2] /= values[n-1]\n\t\t\tvalues = values[:n-1]\n\t\tcase \"%\":\n\t\t\tvalues[n-2] %= values[n-1]\n\t\t\tvalues = values[:n-1]\n\t\tdefault:\n\t\t\tfmt.Println(\"Error\")\n\t\t\treturn\n\t\t}\n\t}\n\tif len(values) == 1 {\n\t\tfmt.Println(values[0])\n\t} else {\n\t\tfmt.Println(\"Error\")\n\t}\n}\n"
+ },
+ "brackets": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа принимает неопределённое количество строк-аргументов. Для каждого аргумента она печатает в стандартный вывод `OK` и перевод строки, если скобки в этой строке расставлены правильно, иначе `Error` и перевод строки. Скобками считаются только `(` `)`, `[` `]`, `{` `}` — все остальные символы просто игнорируются. Открывающая скобка должна закрываться ПАРНОЙ закрывающей и в правильном порядке; строка вообще без скобок считается правильной. Если аргументов нет, программа не печатает ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc matchBrackets(exp string) bool {\n\trunes := []rune(exp)\n\tvar opened []rune\n\tptr := -1\n\tfor _, c := range runes {\n\t\tif c == '(' || c == '[' || c == '{' {\n\t\t\topened = append(opened, c)\n\t\t\tptr++\n\t\t} else if c == ')' {\n\t\t\tif ptr < 0 || opened[ptr] != '(' {\n\t\t\t\treturn false\n\t\t\t}\n\t\t\topened = opened[:len(opened)-1]\n\t\t\tptr--\n\t\t} else if c == ']' {\n\t\t\tif ptr < 0 || opened[ptr] != '[' {\n\t\t\t\treturn false\n\t\t\t}\n\t\t\topened = opened[:len(opened)-1]\n\t\t\tptr--\n\t\t} else if c == '}' {\n\t\t\tif ptr < 0 || opened[ptr] != '{' {\n\t\t\t\treturn false\n\t\t\t}\n\t\t\topened = opened[:len(opened)-1]\n\t\t\tptr--\n\t\t}\n\t}\n\treturn len(opened) == 0\n}\n\nfunc main() {\n\tif len(os.Args) == 1 {\n\t\tfmt.Println()\n\t} else {\n\t\tfor _, v := range os.Args[1:] {\n\t\t\tif matchBrackets(v) {\n\t\t\t\tfmt.Println(\"OK\")\n\t\t\t} else {\n\t\t\t\tfmt.Println(\"Error\")\n\t\t\t}\n\t\t}\n\t}\n}\n"
+ },
+ "countcharacter": {
+  "kind": "function",
+  "prototype": "func CountChar(str string, c rune) int {\n    ...\n}",
+  "statement_ru": "Написать функцию, которая получает строку и один символ и возвращает, сколько раз этот символ встречается в строке. Если символа в строке нет — вернуть 0. Если строка пустая — вернуть 0. По примерам: в \"Hello World\" буква 'l' встречается 3 раза, в \"   \" пробел 3 раза, в \"The 7 deadly sins\" символ '7' один раз.",
+  "code": "package piscine\n\nfunc CountChar(str string, c rune) int {\n\tcount := 0\n\tfor _, r := range str {\n\t\tif r == c {\n\t\t\tcount++\n\t\t}\n\t}\n\treturn count\n}\n"
+ },
+ "digitlen": {
+  "kind": "function",
+  "prototype": "func DigitLen(n, base int) int {\n\n}",
+  "statement_ru": "Функция получает два целых числа и возвращает, сколько раз первое число можно поделить нацело на второе, пока оно не станет нулём. По сути это количество цифр первого числа в системе счисления с основанием base. Второе число должно быть от 2 до 36 включительно, иначе функция возвращает -1. Если первое число отрицательное, надо сменить ему знак и считать цифры как у положительного.",
+  "code": "package piscine\n\nfunc DigitLen(n, base int) int {\n\n\tif base < 2 || base > 36 {\n\t\treturn -1\n\t}\n\n\tif n < 0 {\n\t\tn = -n\n\t}\n\n\tcount := 0\n\tfor n > 0 {\n\t\tn /= base\n\t\tcount++\n\t}\n\treturn count\n}\n"
+ },
+ "fromto": {
+  "kind": "function",
+  "prototype": "func FromTo(from int, to int) string {\n\n}",
+  "statement_ru": "Нужна функция, которая получает два целых числа и возвращает строку с перечислением всех чисел от первого до второго. Числа разделяются запятой и пробелом. Числа меньше 10 печатаются с ведущим нулём: 01, 02 и так далее. В конце строки добавляется перевод строки. Если хотя бы одно из чисел больше 99 или меньше 0, функция возвращает строку Invalid с переводом строки. Направление перечисления зависит от аргументов: если первое число больше второго, счёт идёт вниз.",
+  "code": "package piscine\n\nimport \"strconv\"\n\nfunc FromTo(from, to int) string {\n\tresult := \"\"\n\n\tif from > 99 || from < 0 || to > 99 || to < 0 {\n\t\treturn \"Invalid\\n\"\n\t} else if from == to && from < 10 {\n\t\treturn \"0\" + strconv.Itoa(from) + \"\\n\"\n\t}\n\tif from > to {\n\t\tfor i := from; i >= to; i-- {\n\t\t\tif i < 10 {\n\t\t\t\tresult += \"0\"\n\t\t\t}\n\t\t\tresult += strconv.Itoa(i)\n\t\t\tif i-1 >= to {\n\t\t\t\tresult += \", \"\n\t\t\t}\n\t\t}\n\t\treturn result + \"\\n\"\n\t}\n\tfor i := from; i <= to; i++ {\n\t\tif i < 10 {\n\t\t\tresult += \"0\"\n\t\t}\n\t\tresult += strconv.Itoa(i)\n\t\tif i+1 <= to {\n\t\t\tresult += \", \"\n\t\t}\n\t}\n\treturn result + \"\\n\"\n}\n"
+ },
+ "grouping": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать программу, которая принимает два аргумента: «регулярное выражение» в круглых скобках и текст. Программа повторяет поведение скобок в регулярных выражениях: выводит слова текста, внутри которых встречается выражение из скобок. Оператор `|` означает «или»: ищутся обе строки по обе стороны от него, и слово выводится отдельной строкой за каждое совпавшее выражение. Вывод нумеруется в формате `N: слово` по порядку появления в тексте. Если аргументов не ровно 2, если выражение невалидно, если последний аргумент пустой или если совпадений нет — программа не печатает ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n\t\"unicode\"\n)\n\nfunc singleSearch(exp []string, text string) []string {\n\titems := strings.Split(text, \" \")\n\tvar result []string\n\n\tfor _, item := range items {\n\t\tfor _, word := range exp {\n\t\t\tif strings.Contains(item, word) {\n\t\t\t\tresult = append(result, item)\n\t\t\t}\n\t\t}\n\t}\n\treturn result\n}\n\nfunc simpleSearch(runes []rune, text string) []string {\n\texp := string(runes)\n\n\tvar result []string\n\tif !strings.ContainsRune(exp, '|') {\n\t\thelper := []string{exp}\n\t\tresult = append(singleSearch(helper, text))\n\t} else {\n\t\texpWords := strings.Split(exp, \"|\")\n\t\tresult = append(result, singleSearch(expWords, text)...)\n\t}\n\treturn result\n}\n\nfunc brackets(regexp, text string) {\n\tif text == \"\" || regexp == \"\" {\n\t\treturn\n\t}\n\trunes := []rune(regexp)\n\n\tif runes[0] == '(' && runes[len(runes)-1] == ')' {\n\t\trunes = runes[1 : len(runes)-1]\n\t\tresult := simpleSearch(runes, text)\n\t\tfor i, s := range result {\n\t\t\tif !unicode.IsLetter(rune(s[len(s)-1])) {\n\t\t\t\ts = s[0 : len(s)-1]\n\t\t\t}\n\t\t\tfmt.Printf(\"%d: %s\\n\", i+1, s)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tif len(os.Args) == 3 {\n\t\tbrackets(os.Args[1], os.Args[2])\n\t}\n}\n"
+ },
+ "inter": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает два аргумента-строки. Надо вывести символы, которые встречаются в обеих строках, без повторов, в том порядке, в котором они идут в первой строке. Вывод завершается переводом строки. Если аргументов не ровно два — программа не выводит ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc result(s1 string, s2 string) string {\n\tvar rest []rune\n\tfor _, a := range s1 {\n\t\tfor _, b := range s2 {\n\t\t\tif a == b && !strings.ContainsRune(string(rest), a) {\n\t\t\t\trest = append(rest, a)\n\t\t\t}\n\t\t}\n\t}\n\treturn string(rest)\n}\n\nfunc main() {\n\tif len(os.Args) == 3 {\n\t\tfmt.Println(result(os.Args[1], os.Args[2]))\n\t}\n}\n"
+ },
+ "longestword": {
+  "kind": "function",
+  "prototype": "func LongestWord(s string) string {",
+  "statement_ru": "Функция получает строку и возвращает самое длинное правильное слово в ней. Слова разделяются пробелами. Правильным считается слово, целиком состоящее из букв; при этом разрешён один знак препинания в самом конце (точка, запятая, восклицательный или вопросительный знак, точка с запятой, двоеточие) — он отбрасывается при проверке, но остаётся в ответе. Слово с цифрой или спецсимволом внутри правильным не считается. Если правильных слов нет, возвращается пустая строка. При равной длине побеждает то, что встретилось раньше.",
+  "code": "package piscine\n\nimport (\n\t\"strings\"\n\t\"unicode\"\n)\n\nfunc isValidWord(word string) bool {\n\tif word == \"\" {\n\t\treturn false\n\t}\n\n\tlast := rune(word[len(word)-1])\n\tif strings.ContainsRune(\".,!?;:\", last) {\n\t\tword = word[:len(word)-1]\n\t\tif word == \"\" {\n\t\t\treturn false\n\t\t}\n\t}\n\n\tfirstRune := []rune(word)[0]\n\tif !unicode.IsLetter(firstRune) {\n\t\treturn false\n\t}\n\n\tfor _, r := range word {\n\t\tif !unicode.IsLetter(r) {\n\t\t\treturn false\n\t\t}\n\t}\n\n\treturn true\n}\n\nfunc LongestWord(s string) string {\n\twords := strings.Fields(s)\n\tlongest := \"\"\n\n\tfor _, w := range words {\n\t\tif isValidWord(w) {\n\t\t\tif len([]rune(w)) > len([]rune(longest)) {\n\t\t\t\tlongest = w\n\t\t\t}\n\t\t}\n\t}\n\n\treturn longest\n}\n"
+ },
+ "onlya": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Нужна программа, которая печатает на экран одну маленькую латинскую букву a и больше ничего. В README у этой задачи нет раздела Usage, есть только строчка инструкции с уточнением в скобках: и ничего кроме. Вывод должен состоять из самой буквы и перевода строки в конце. Аргументы при запуске на вывод не влияют.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Print(\"a\")\n}\n"
+ },
+ "onlyz": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Нужна программа, которая печатает на экран одну маленькую латинскую букву z и больше ничего. Раздела Usage в README у этой задачи нет, есть только инструкция с уточнением в скобках: и ничего кроме. Вывод — сама буква плюс перевод строки в конце. Аргументы при запуске на результат не влияют.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Print(\"z\")\n}\n"
+ },
+ "options": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать программу, которая принимает любое количество аргументов-опций и печатает их представление в виде групп бит с переводом строки в конце. Опция — аргумент, начинающийся с дефиса, дальше идут буквы из набора a-z. Все опции хранятся в одном int: каждая буква — один бит, a это самый правый (младший) бит, z — двадцать шестой. Печатается всё 32-битное число: четыре группы по восемь бит, разделённые пробелами. Если аргументов нет вообще или в каком-то из аргументов флаг -h стоит первым символом после дефиса — печатается строка со списком всех допустимых опций. Неправильная опция — печатается Invalid Option и перевод строки.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"unicode\"\n)\n\nfunc main() {\n\tif len(os.Args) < 2 {\n\t\tfmt.Println(\"options: abcdefghijklmnopqrstuvwxyz\")\n\t\treturn\n\t}\n\n\tvar options [32]bool\n\tfor _, v := range os.Args {\n\t\tif len(v) < 2 {\n\t\t\tfmt.Println(\"Invalid Option\")\n\t\t\treturn\n\t\t}\n\t\tif v[0] == '-' {\n\t\t\tif v[1] == 'h' {\n\t\t\t\tfmt.Println(\"options: abcdefghijklmnopqrstuvwxyz\")\n\t\t\t\treturn\n\t\t\t}\n\t\t\t// fill options\n\t\t\tfor _, r := range v[1:] {\n\t\t\t\tif !unicode.Is(unicode.Latin, r) {\n\t\t\t\t\tfmt.Println(\"Invalid Option\")\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\toptions['z'-r+6] = true\n\t\t\t}\n\t\t}\n\t}\n\tfor i, v := range options {\n\t\tif i%8 == 0 && i != 0 {\n\t\t\tfmt.Print(\" \")\n\t\t}\n\t\tif v {\n\t\t\tfmt.Print(1)\n\t\t} else {\n\t\t\tfmt.Print(0)\n\t\t}\n\t}\n\tfmt.Println()\n}\n"
+ },
+ "piglatin": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Написать программу, которая переводит слово, переданное аргументом, в его версию на Pig Latin. Правила: если слово начинается с гласной — просто дописать в конец \"ay\"; если с согласной — все согласные до первой гласной перенести в конец слова и потом дописать \"ay\". Гласными считаются только латинские aeiou (пример Is → Isay показывает, что заглавные тоже считаются). Если в слове нет ни одной гласной — напечатать \"No vowels\". Если аргументов не ровно один — программа не печатает ничего.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tif len(os.Args) != 2 || os.Args[1] == \"\" {\n\t\treturn\n\t}\n\ts := os.Args[1]\n\tvowel := strings.IndexAny(s, \"aeiouAEIOU\")\n\tif vowel == -1 {\n\t\tfmt.Println(\"No vowels\")\n\t} else {\n\t\tfmt.Println(string(s[vowel:]) + string(s[:vowel]) + \"ay\")\n\t}\n}\n"
+ },
+ "rectperimeter": {
+  "kind": "function",
+  "prototype": "func RectPerimeter(w, h int) int {\n\n}",
+  "statement_ru": "Написать функцию, которая получает два целых числа — ширину и высоту прямоугольника — и возвращает его периметр. Периметр это сумма длин всех четырёх сторон. Если хотя бы одно из чисел отрицательное, функция должна вернуть -1.",
+  "code": "package piscine\n\nfunc RectPerimeter(w, h int) int {\n\tif (w < 0) || (h < 0) {\n\t\treturn -1\n\t}\n\n\treturn 2 * (w + h)\n}\n"
+ },
+ "rostring": {
+  "kind": "program",
+  "prototype": "",
+  "statement_ru": "Программа получает одну строку аргументом и печатает её, повернув на одно слово влево: первое слово уходит в конец, остальные сохраняют свой порядок. В выводе слова разделены ровно одним пробелом, в конце перевод строки. Лишние пробелы во входной строке схлопываются. Если аргументов не ровно один, программа печатает просто перевод строки.",
+  "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc deleteExtraSpaces(a []string) []string {\n\tvar res []string\n\tfor _, v := range a {\n\t\tif v != \"\" {\n\t\t\tres = append(res, v)\n\t\t}\n\t}\n\treturn res\n}\n\nfunc main() {\n\tif len(os.Args) == 2 {\n\t\twords := strings.Split(os.Args[1], \" \")\n\t\twords = deleteExtraSpaces(words)\n\t\tif len(words) >= 1 {\n\t\t\tfor _, v := range words[1:] {\n\t\t\t\tfmt.Print(v, \" \")\n\t\t\t}\n\t\t\tfmt.Print(words[0])\n\t\t}\n\t}\n\tfmt.Println()\n}\n"
+ },
+ "slice": {
+  "kind": "function",
+  "prototype": "func Slice(a []string, nbrs... int) []string{\n\n}",
+  "statement_ru": "Функция получает срез строк и одно или несколько целых чисел, возвращает часть этого среза. Если число одно — кусок начинается с этой позиции и идёт до конца среза. Если чисел два — от первой позиции до второй, причём вторая позиция не включается. Числа могут быть отрицательными: тогда к ним прибавляется длина среза, то есть позиция отсчитывается от конца. Если после пересчёта начало оказалось правее конца, функция возвращает nil.",
+  "code": "package piscine\n\nfunc ifNegative(a []string, n int) int {\n\tif n < 0 {\n\t\tn = len(a) + n\n\t}\n\n\tif n < 0 {\n\t\tn = 0\n\t} else if n > len(a) {\n\t\tn = len(a)\n\t}\n\n\treturn n\n}\n\nfunc Slice(a []string, nbr ...int) []string {\n\tif len(nbr) == 0 {\n\t\treturn a\n\t}\n\n\tfirst := nbr[0]\n\tif len(nbr) == 1 {\n\t\tif first < 0 {\n\t\t\tfirst = len(a) + first\n\t\t\tif first < 0 {\n\t\t\t\treturn a\n\t\t\t}\n\t\t}\n\t\treturn a[first:]\n\t}\n\tsecond := nbr[1]\n\n\tfirst = ifNegative(a, first)\n\tsecond = ifNegative(a, second)\n\n\tif first > second {\n\t\treturn nil\n\t}\n\n\treturn a[first:second]\n}\n"
+ }
+}

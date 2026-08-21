@@ -1,0 +1,934 @@
+===== only1.go ===== HTTP 404
+
+===== onlya.go ===== HTTP 404
+
+===== onlyb.go ===== HTTP 404
+
+===== onlyf.go ===== HTTP 404
+
+===== onlyz.go ===== HTTP 404
+
+===== checknumber.go =====
+package solutions
+
+func CheckNumber(str string) bool {
+	for _, c := range str {
+		if c >= '0' && c <= '9' {
+			return true
+		}
+	}
+	return false
+}
+
+
+===== countalpha.go =====
+package solutions
+
+func CountAlpha(s string) int {
+	count := 0
+	for _, c := range s {
+		if c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' {
+			count++
+		}
+	}
+	return count
+}
+
+
+===== countcharacter.go ===== HTTP 404
+
+===== printif.go =====
+package solutions
+
+func PrintIf(arg string) string {
+	if len(arg) != 0 && len(arg) < 3 {
+		return "Invalid Input\n"
+	}
+	return "G\n"
+}
+
+
+===== printifnot.go =====
+package solutions
+
+func PrintIfNot(arg string) string {
+	if len(arg) >= 3 {
+		return "Invalid Input\n"
+	} else {
+		return "G\n"
+	}
+}
+
+
+===== rectperimeter.go =====
+package solutions
+
+func RectPerimeter(w, h int) int {
+	if (w < 0) || (h < 0) {
+		return -1
+	}
+
+	return 2 * (w + h)
+}
+
+
+===== retainfirsthalf.go =====
+package solutions
+
+import "strings"
+
+func RetainFirstHalf(str string) string {
+	if len(str) == 0 {
+		return ""
+	} else if len(str) == 1 {
+		return (str)
+	} else {
+		var res strings.Builder
+		i := 0
+		for i = 0; i < int(len(str)/2); i++ {
+			res.WriteRune(rune(str[i]))
+		}
+		return res.String()
+	}
+}
+
+
+===== cameltosnakecase.go =====
+package solutions
+
+func containOnlyAlphabet(str string) bool {
+	for _, c := range str {
+		if (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') {
+			return false
+		}
+	}
+	return true
+}
+
+func isUpper(s rune) bool {
+	return s >= 'A' && s <= 'Z'
+}
+
+func CamelToSnakeCase(s string) string {
+	result := ""
+	if len(s) == 0 || !containOnlyAlphabet(s) {
+		return s
+	}
+	for i := 0; i < len(s); i++ {
+		if i != 0 && isUpper(rune(s[i])) && i+1 < len(s) && !isUpper(rune(s[i+1])) {
+			result += "_"
+			result += string(s[i])
+		} else if !isUpper(rune(s[i])) || (i == 0 && isUpper(rune(s[i]))) {
+			result += string(s[i])
+		} else {
+			return s
+		}
+	}
+	return result
+}
+
+
+===== countrepeats.go =====
+package solutions
+
+import (
+	"strconv"
+)
+
+func CountRepeats(s string) string {
+	if s == "" {
+		return s
+	}
+
+	var result string
+	var counter = 1
+
+	for i := 0; i < len(s); i++ {
+		if i+1 < len(s) && string(s[i]) == string(s[i+1]) {
+			counter++
+		} else {
+			result += string(s[i])
+			if counter > 1 {
+				result += strconv.Itoa(counter)
+			}
+			counter = 1
+		}
+	}
+	return result
+}
+
+
+===== digitlen.go =====
+package solutions
+
+func DigitLen(n, base int) int {
+
+	if base < 2 || base > 36 {
+		return -1
+	}
+
+	if n < 0 {
+		n = -n
+	}
+
+	count := 0
+	for n > 0 {
+		n /= base
+		count++
+	}
+	return count
+}
+
+
+===== firstword.go =====
+package solutions
+
+import "strings"
+
+func FirstWord(s string) string {
+	words := strings.Fields(s)
+	res := "\n"
+	if len(words) > 0 {
+		res = words[0] + res
+	}
+	return res
+}
+
+
+===== fishandchips.go =====
+package solutions
+
+func FishAndChips(n int) string {
+	if n < 0 {
+		return "error: number is negative"
+	}
+
+	if (n%2 == 0) && (n%3 == 0) {
+		return "fish and chips"
+	}
+	if n%2 == 0 {
+		return "fish"
+	}
+	if n%3 == 0 {
+		return "chips"
+	}
+	return "error: non divisible"
+}
+
+
+===== gcd.go =====
+package solutions
+
+func Gcd(a, b uint) uint {
+	for a != b {
+		if a > b {
+			a -= b
+		} else {
+			b -= a
+		}
+	}
+	return a
+}
+
+
+===== hashcode.go =====
+package solutions
+
+func HashCode(dec string) string {
+	size := len(dec)
+	hashed := ""
+	for _, char := range dec {
+		hash := (int(char) + size) % 127
+		if hash < 32 || hash > 126 {
+			hash += 33
+		}
+		hashed += string(hash)
+	}
+	return hashed
+}
+
+
+===== lastword.go =====
+package solutions
+
+import (
+	"strings"
+)
+
+func LastWord(s string) string {
+	words := strings.Fields(s)
+	if len(words) > 0 {
+		return words[len(words)-1] + "\n"
+	}
+	return "\n"
+}
+
+
+===== longestword.go =====
+package solutions
+
+import (
+	"strings"
+	"unicode"
+)
+
+func isValidWord(word string) bool {
+	if word == "" {
+		return false
+	}
+
+	last := rune(word[len(word)-1])
+	if strings.ContainsRune(".,!?;:", last) {
+		word = word[:len(word)-1]
+		if word == "" {
+			return false
+		}
+	}
+
+	firstRune := []rune(word)[0]
+	if !unicode.IsLetter(firstRune) {
+		return false
+	}
+
+	for _, r := range word {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func LongestWord(s string) string {
+	words := strings.Fields(s)
+	longest := ""
+
+	for _, w := range words {
+		if isValidWord(w) {
+			if len([]rune(w)) > len([]rune(longest)) {
+				longest = w
+			}
+		}
+	}
+
+	return longest
+}
+
+
+===== repeatalpha.go =====
+package solutions
+
+import "unicode"
+
+func RepeatAlpha(s string) string {
+	res := ""
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			rep := unicode.ToLower(r) - 'a' + 1
+			for i := 0; i < int(rep); i++ {
+				res += string(r)
+			}
+		} else {
+			res += string(r)
+		}
+	}
+	return res
+}
+
+
+===== searchreplace.go ===== HTTP 404
+
+===== wordanatomy.go =====
+package solutions
+
+func WordAnatomy(initialWord string, prefixArray []string, suffixArray []string) string {
+	matchedPrefix := ""
+	matchedSuffix := ""
+
+	for _, prefix := range prefixArray {
+		if hasPrefix(initialWord, prefix) {
+			matchedPrefix = prefix
+			break
+		}
+	}
+	for _, suffix := range suffixArray {
+		if hasSuffix(initialWord, suffix) {
+			matchedSuffix = suffix
+			break
+		}
+	}
+
+	return "prefix: " + matchedPrefix + "," + " suffix: " + matchedSuffix
+}
+
+func hasPrefix(initialWord, prefix string) bool {
+	if len(prefix) > len(initialWord) {
+		return false
+	}
+
+	return initialWord[:len(prefix)] == prefix
+}
+
+func hasSuffix(initialWord, suffix string) bool {
+	if len(suffix) > len(initialWord) {
+		return false
+	}
+
+	return initialWord[len(initialWord)-len(suffix):] == suffix
+}
+
+
+===== cleanstr.go ===== HTTP 404
+
+===== expandstr.go ===== HTTP 404
+
+===== findprevprime.go =====
+package solutions
+
+import "github.com/01-edu/go-tests/lib/is"
+
+func FindPrevPrime(nb int) int {
+	if nb < 2 {
+		return 0
+	}
+	if is.Prime(nb) {
+		return nb
+	}
+	return FindPrevPrime(nb - 1)
+}
+
+
+===== fromto.go =====
+package solutions
+
+import "strconv"
+
+func FromTo(from, to int) string {
+	result := ""
+
+	if from > 99 || from < 0 || to > 99 || to < 0 {
+		return "Invalid\n"
+	} else if from == to && from < 10 {
+		return "0" + strconv.Itoa(from) + "\n"
+	}
+	if from > to {
+		for i := from; i >= to; i-- {
+			if i < 10 {
+				result += "0"
+			}
+			result += strconv.Itoa(i)
+			if i-1 >= to {
+				result += ", "
+			}
+		}
+		return result + "\n"
+	}
+	for i := from; i <= to; i++ {
+		if i < 10 {
+			result += "0"
+		}
+		result += strconv.Itoa(i)
+		if i+1 <= to {
+			result += ", "
+		}
+	}
+	return result + "\n"
+}
+
+
+===== iscapitalized.go =====
+package solutions
+
+func IsCapitalized(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+
+	for i := 0; i < len(s); i++ {
+		if s[i] >= 'a' && s[i] <= 'z' && i != 0 && s[i-1] == ' ' {
+			return false
+		}
+	}
+	return !(s[0] >= 'a' && s[0] <= 'z')
+}
+
+
+===== itoa.go =====
+package solutions
+
+import "strconv"
+
+var Itoa = strconv.Itoa
+
+
+===== passwordentropy.go =====
+package solutions
+
+import (
+	"math"
+	"unicode"
+)
+
+func Entropy(password string) float64 {
+	const (
+		lowerBit = 1 << iota
+		upperBit
+		digitBit
+		specialBit
+	)
+
+	used := 0
+	poolSize := 0.0
+
+	for _, r := range password {
+		if used&lowerBit == 0 && unicode.IsLower(r) {
+			used |= lowerBit
+			poolSize += 26
+		} else if used&upperBit == 0 && unicode.IsUpper(r) {
+			used |= upperBit
+			poolSize += 26
+		} else if used&digitBit == 0 && unicode.IsDigit(r) {
+			used |= digitBit
+			poolSize += 10
+		} else if used&specialBit == 0 && !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+			used |= specialBit
+			poolSize += 32
+		}
+
+		if used == lowerBit|upperBit|digitBit|specialBit {
+			break
+		}
+	}
+
+	if poolSize == 0 {
+		return 0
+	}
+
+	return float64(len(password)) * math.Log2(poolSize)
+}
+
+
+===== printmemory.go =====
+package solutions
+
+import (
+	"fmt"
+	"strings"
+)
+
+func PrintMemory(a [10]byte) {
+	str := ""
+	for i, nbr := range a {
+		fmt.Printf("%.2x", nbr)
+
+		if ((i+1)%4 == 0 && i != 0) || i == len(a)-1 {
+			fmt.Println()
+		} else {
+			fmt.Print(" ")
+		}
+
+		if nbr >= 33 && nbr <= 126 {
+			str += string(rune(nbr))
+		} else {
+			str += "."
+		}
+	}
+	fmt.Println(str + strings.Repeat(".", 10-len(a)))
+}
+
+
+===== printrevcomb.go ===== HTTP 404
+
+===== thirdtimeisacharm.go =====
+package solutions
+
+import "strings"
+
+func ThirdTimeIsACharm(arg string) string {
+	if arg == "" || len(arg) < 3 {
+		return "\n"
+	}
+	var str strings.Builder
+	for i := 0; i < len(arg); i++ {
+		if i == 0 {
+			continue
+		}
+		j := i + 1
+		if j%3 == 0 {
+			str.WriteRune(rune(arg[i]))
+		}
+	}
+	str.WriteRune(rune('\n'))
+	return (str.String())
+}
+
+
+===== weareunique.go =====
+package solutions
+
+import "strings"
+
+func WeAreUnique(str1 string, str2 string) int {
+	var used [127]int
+	if str1 == "" && str2 == "" {
+		return -1
+	}
+	var argv []string = []string{str1, str2}
+	k := 0
+	i := 0
+	for i < 2 {
+		j := 0
+		for j < len(argv[i]) {
+			if used[argv[i][j]] == 0 && !strings.Contains(argv[1-i], string(argv[i][j])) {
+				used[argv[i][j]] = 1
+				k++
+			}
+			j++
+		}
+		i++
+	}
+	return k
+}
+
+
+===== zipstring.go =====
+package solutions
+
+import "strconv"
+
+func countDuplication(s string, i int) int {
+	var count int = 0
+	for _, v := range s[i:] {
+		if v == rune(s[i]) {
+			count++
+		} else {
+			break
+		}
+	}
+	return count
+}
+
+func ZipString(s string) string {
+	var result string
+	i := 0
+	for i < len(s) {
+		counter := countDuplication(s, i)
+		result = result + strconv.Itoa(counter) + string(s[i])
+		i += int(counter)
+	}
+	return result
+}
+
+
+===== addprimesum.go ===== HTTP 404
+
+===== canjump.go =====
+package solutions
+
+func CanJump(steps []uint) bool {
+	if len(steps) == 0 {
+		return false
+	}
+
+	maxReach := 0
+	for i := 0; i < len(steps); i++ {
+		if i > maxReach {
+			return false
+		}
+		maxReach = max(maxReach, i+int(steps[i]))
+		if maxReach == len(steps)-1 || len(steps) == 1 {
+			return true
+		}
+	}
+	return false
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+
+===== chunk.go =====
+package solutions
+
+import "fmt"
+
+func Chunk(a []int, ch int) {
+	var slice []int
+	if ch <= 0 {
+		fmt.Println()
+		return
+	}
+	result := make([][]int, 0, len(a)/ch+1)
+	for len(a) >= ch {
+		slice, a = a[:ch], a[ch:]
+		result = append(result, slice)
+	}
+	if len(a) > 0 {
+		result = append(result, a[:])
+	}
+	fmt.Println(result)
+}
+
+
+===== concatalternate.go =====
+package solutions
+
+func ConcatAlternate(slice1, slice2 []int) []int {
+	var result []int
+
+	if len(slice1) < len(slice2) {
+		slice1, slice2 = slice2, slice1
+	}
+	for i, v := range slice1 {
+		result = append(result, v)
+		if i < len(slice2) {
+			result = append(result, slice2[i])
+		}
+	}
+	return result
+}
+
+
+===== concatslice.go =====
+package solutions
+
+func ConcatSlice(slice1, slice2 []int) []int {
+	var result []int
+	for _, v := range slice1 {
+		result = append(result, v)
+	}
+	for _, v := range slice2 {
+		result = append(result, v)
+	}
+	return result
+}
+
+
+===== fprime.go ===== HTTP 404
+
+===== hiddenp.go ===== HTTP 404
+
+===== inter.go ===== HTTP 404
+
+===== reversestrcap.go ===== HTTP 404
+
+===== saveandmiss.go =====
+package solutions
+
+func SaveAndMiss(arg string, num int) string {
+	if num <= 0 || num > len(arg) {
+		return string(arg)
+	}
+	_str := ""
+	for i := 0; i < len(arg); i++ {
+		if i != 0 && i%num == 0 {
+			i += num
+			if i > len(arg)-1 {
+				break
+			}
+		}
+		if i != len(arg) {
+			_str += string(rune(arg[i]))
+		}
+	}
+	return _str
+}
+
+
+===== union.go ===== HTTP 404
+
+===== wdmatch.go ===== HTTP 404
+
+===== fifthandskip.go =====
+package solutions
+
+import "strings"
+
+func FifthAndSkip(str string) string {
+	if str == "" {
+		return "\n"
+	}
+	if len(str) < 5 {
+		return "Invalid Input\n"
+	}
+	s := strings.ReplaceAll(str, " ", "")
+	var _str strings.Builder
+	j := 0
+	for _, char := range s {
+		if j == 5 {
+			_str.WriteRune(rune(' '))
+			j = 0
+		} else {
+			_str.WriteRune(rune(char))
+			j++
+		}
+	}
+	_str.WriteRune('\n')
+	return _str.String()
+}
+
+
+===== notdecimal.go =====
+package solutions
+
+import (
+	"math"
+	"strconv"
+)
+
+func NotDecimal(dec string) string {
+	j := -1
+	n := 0
+	if len(dec) == 0 {
+		return "\n"
+	}
+	for i := 0; i < len(dec); i++ {
+		if j == -1 && dec[i] == '.' {
+			j++
+		} else if j == 0 {
+			n++
+		}
+	}
+	s, err := strconv.ParseFloat(dec, 64)
+	if err == nil {
+		return strconv.Itoa(int(s*math.Pow(10, float64(n)))) + "\n"
+	}
+	return (dec + "\n")
+}
+
+
+===== revconcatalternate.go =====
+package solutions
+
+func RevConcatAlternate(slice1, slice2 []int) []int {
+	len1 := len(slice1)
+	len2 := len(slice2)
+	maxLen := len1
+	result := make([]int, 0, len1+len2)
+
+	if len2 > maxLen {
+		maxLen = len2
+	}
+
+	for i := maxLen; i >= 0; i-- {
+		if i < len1 {
+			result = append(result, slice1[i])
+		}
+		if i < len2 {
+			result = append(result, slice2[i])
+		}
+	}
+
+	return result
+}
+
+
+===== slice.go =====
+package solutions
+
+func ifNegative(a []string, n int) int {
+	if n < 0 {
+		n = len(a) + n
+	}
+
+	if n < 0 {
+		n = 0
+	} else if n > len(a) {
+		n = len(a)
+	}
+
+	return n
+}
+
+func Slice(a []string, nbr ...int) []string {
+	if len(nbr) == 0 {
+		return a
+	}
+
+	first := nbr[0]
+	if len(nbr) == 1 {
+		if first < 0 {
+			first = len(a) + first
+			if first < 0 {
+				return a
+			}
+		}
+		return a[first:]
+	}
+	second := nbr[1]
+
+	first = ifNegative(a, first)
+	second = ifNegative(a, second)
+
+	if first > second {
+		return nil
+	}
+
+	return a[first:second]
+}
+
+
+===== findpairs.go ===== HTTP 404
+
+===== revwstr.go ===== HTTP 404
+
+===== rostring.go ===== HTTP 404
+
+===== wordflip.go =====
+package solutions
+
+import "strings"
+
+func WordFlip(arg string) string {
+	if arg == "" {
+		return "Invalid Output\n"
+	}
+	var str []string = strings.Split(arg, " ")
+	_len := len(str)
+	var str1 string
+	for i := _len - 1; i >= 0; i-- {
+		if len(str[i]) != 0 {
+			str1 += str[i]
+		}
+		if i > 0 && len(str[i-1]) != 0 {
+			str1 += " "
+		}
+	}
+	return (strings.TrimSpace(str1) + "\n")
+}
+
+
+===== itoabase.go =====
+package solutions
+
+import (
+	"strconv"
+	"strings"
+)
+
+func ItoaBase(value, base int) string {
+	if base < 2 || base > 16 {
+		return ""
+	}
+
+	return strings.ToUpper(strconv.FormatInt(int64(value), base))
+}
+
+
+===== options.go ===== HTTP 404
+
+===== piglatin.go ===== HTTP 404
+
+===== romannumbers.go ===== HTTP 404
+
+===== brackets.go ===== HTTP 404
+
+===== rpncalc.go ===== HTTP 404
+
+===== brainfuck.go ===== HTTP 404
+
+===== grouping.go ===== HTTP 404

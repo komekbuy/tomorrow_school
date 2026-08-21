@@ -1,0 +1,660 @@
+<title>Карта Go</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+  @page { size: 594mm 420mm; margin: 0; }
+
+  :root{
+    --paper:#F1F4F6;
+    --card:#FFFFFF;
+    --ink:#132029;
+    --ink-2:#4E6373;
+    --ink-3:#7D909D;
+    --line:#D6DFE5;
+
+    --base:#0077A8;
+    --val:#A96A05;
+    --txt:#B8236F;
+    --set:#0A8080;
+    --act:#227A46;
+    --mem:#6046B8;
+
+    --f-d:"Familjen Grotesk",system-ui,sans-serif;
+    --f-b:"Public Sans",system-ui,sans-serif;
+    --f-m:"JetBrains Mono",ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{background:var(--paper)}
+
+  body{
+    width:594mm;height:420mm;
+    font-family:var(--f-b);
+    color:var(--ink);
+    padding:11mm 12mm 8mm;
+    display:flex;flex-direction:column;gap:5mm;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+
+  /* ---------- ШАПКА ---------- */
+  .top{display:flex;align-items:flex-end;gap:9mm;border-bottom:.6mm solid var(--ink);padding-bottom:3.5mm}
+  .gopher{width:22mm;height:22mm;flex:none}
+  .ttl h1{font-family:var(--f-d);font-weight:700;font-size:15mm;line-height:.9;letter-spacing:-.03em}
+  .ttl h1 em{font-style:normal;color:var(--base)}
+  .ttl p{font-size:4.1mm;color:var(--ink-2);margin-top:1.4mm;max-width:150mm;line-height:1.4}
+  .howto{margin-left:auto;display:flex;gap:6mm;align-items:flex-end}
+  .hint{font-size:3.3mm;color:var(--ink-2);line-height:1.45;max-width:52mm}
+  .hint b{color:var(--ink)}
+  .hint .key{display:inline-flex;align-items:center;gap:1.5mm;font-family:var(--f-m);font-size:2.9mm;color:var(--ink-3)}
+  .arrowkey{width:9mm;height:2mm}
+
+  /* ---------- КАРТА ---------- */
+  .map{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:0 4.5mm;min-height:0}
+
+  .col{display:flex;flex-direction:column;gap:2.3mm;min-height:0;position:relative}
+  .col::after{
+    content:"";position:absolute;top:9mm;right:-3.4mm;width:2.3mm;height:2.3mm;
+    border-top:.5mm solid var(--ink-3);border-right:.5mm solid var(--ink-3);
+    transform:rotate(45deg);
+  }
+  .col:last-child::after{display:none}
+
+  .stage{display:flex;align-items:baseline;gap:2mm;padding-bottom:1.6mm;border-bottom:.45mm solid var(--tone)}
+  .stage .num{
+    font-family:var(--f-m);font-size:3mm;font-weight:700;color:#fff;background:var(--tone);
+    width:6mm;height:6mm;border-radius:1.2mm;display:flex;align-items:center;justify-content:center;flex:none;
+    align-self:center;
+  }
+  .stage h2{font-family:var(--f-d);font-weight:700;font-size:5.4mm;letter-spacing:-.02em;color:var(--tone);line-height:1}
+  .stage span{margin-left:auto;font-size:2.9mm;color:var(--ink-3);align-self:center}
+
+  .node{
+    background:var(--card);border:.35mm solid var(--line);border-radius:1.6mm;
+    padding:2.3mm 2.7mm;display:flex;flex-direction:column;gap:1.2mm;
+  }
+    .node h3{
+    font-family:var(--f-d);font-weight:600;font-size:3.95mm;line-height:1.12;
+    display:flex;align-items:center;gap:1.8mm;
+  }
+  .node h3 i{width:2mm;height:2mm;border-radius:50%;background:var(--tone);flex:none}
+  .node p{font-size:3.15mm;line-height:1.4;color:var(--ink-2)}
+  .node p b{color:var(--ink);font-weight:600}
+  .node p .t{color:var(--tone);font-weight:600}
+
+  code{font-family:var(--f-m);font-size:3mm;background:#EEF2F5;border-radius:.8mm;padding:.2mm 1mm;color:var(--ink)}
+  .node pre{
+    font-family:var(--f-m);font-size:2.9mm;line-height:1.45;background:#F5F8FA;
+    border-left:.7mm solid var(--tone);border-radius:0 1mm 1mm 0;padding:1.3mm 1.8mm;
+    white-space:pre;overflow:hidden;color:var(--ink);
+  }
+
+  /* определение термина */
+  .def{display:flex;gap:2mm;font-size:3.02mm;line-height:1.36}
+  .def dt{font-family:var(--f-m);font-weight:700;color:var(--tone);flex:none}
+  .def dd{color:var(--ink-2)}
+
+  /* блок сравнения */
+  .vs{
+    background:var(--card);border:.45mm solid var(--tone);border-radius:1.6mm;overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .vs .cap{
+    background:var(--tone);color:#fff;font-family:var(--f-d);font-weight:600;
+    font-size:3.4mm;padding:1.2mm 2.6mm;display:flex;align-items:center;gap:2mm;
+  }
+  .vs .cap .mark{font-family:var(--f-m);font-weight:700;opacity:.7;font-size:3mm}
+  .vs .pair{display:grid;grid-template-columns:1fr 1fr}
+  .vs .side{padding:1.9mm 2.6mm;display:flex;flex-direction:column;gap:.8mm}
+  .vs .side:first-child{border-right:.35mm solid var(--line)}
+  .vs .side h4{font-family:var(--f-m);font-size:3.1mm;font-weight:700;color:var(--ink)}
+  .vs .side ul{list-style:none;display:flex;flex-direction:column;gap:.8mm}
+  .vs .side li{font-size:2.98mm;line-height:1.3;color:var(--ink-2);padding-left:2.6mm;position:relative}
+  .vs .side li::before{content:"";position:absolute;left:0;top:1.5mm;width:1.2mm;height:1.2mm;border-radius:50%;background:var(--tone);opacity:.55}
+  .vs .side li b{color:var(--ink);font-weight:600}
+  .vs .bottom{border-top:.35mm solid var(--line);padding:1.5mm 2.6mm;font-size:2.98mm;line-height:1.36;color:var(--ink-2);background:#FAFCFD}
+  .vs .bottom b{color:var(--tone);font-weight:600}
+
+  /* связь с другой темой */
+  .link{
+    font-size:2.95mm;color:var(--ink-3);font-family:var(--f-m);line-height:1.4;
+    border-top:.3mm dashed var(--line);padding-top:1.2mm;
+  }
+  .link b{color:var(--tone);font-weight:700}
+
+  /* ---------- НИЗ ---------- */
+  .foot{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:4.5mm;align-items:stretch}
+  .fbox{background:var(--card);border:.35mm solid var(--line);border-radius:1.6mm;padding:2.6mm 3.2mm;display:flex;flex-direction:column;gap:1.6mm}
+  .fbox h3{font-family:var(--f-d);font-weight:700;font-size:4.2mm;display:flex;align-items:center;gap:2mm}
+  .fbox h3 i{width:2.2mm;height:2.2mm;border-radius:50%;background:var(--tone);flex:none}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1mm 4mm}
+  .frow{display:grid;grid-template-columns:auto 1fr;gap:2mm;font-size:3.05mm;line-height:1.35;align-items:baseline}
+  .frow code{color:var(--tone);background:none;padding:0;font-weight:500;white-space:nowrap}
+  .frow span{color:var(--ink-2)}
+  .zero{display:flex;flex-wrap:wrap;gap:1mm 3mm}
+  .zero div{font-size:2.98mm;color:var(--ink-2)}
+  .zero code{color:var(--tone);background:none;padding:0}
+  .zero b{color:var(--ink)}
+
+  .stamp{font-family:var(--f-m);font-size:2.8mm;color:var(--ink-3);letter-spacing:.1em;text-align:right;margin-top:-2mm}
+</style>
+
+<!-- ================= ШАПКА ================= -->
+<header class="top">
+  <svg class="gopher" viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="26" cy="25" rx="7" ry="8" fill="#0077A8"/>
+    <ellipse cx="74" cy="25" rx="7" ry="8" fill="#0077A8"/>
+    <ellipse cx="50" cy="57" rx="31" ry="34" fill="#00ADD8"/>
+    <ellipse cx="50" cy="63" rx="20" ry="25" fill="#BFEAF5"/>
+    <ellipse cx="16" cy="58" rx="6.5" ry="10" fill="#00ADD8"/>
+    <ellipse cx="84" cy="58" rx="6.5" ry="10" fill="#00ADD8"/>
+    <circle cx="36" cy="40" r="13" fill="#FFFFFF" stroke="#0077A8" stroke-width="1.2"/>
+    <circle cx="64" cy="40" r="13" fill="#FFFFFF" stroke="#0077A8" stroke-width="1.2"/>
+    <circle cx="38.5" cy="41" r="6" fill="#132029"/>
+    <circle cx="61.5" cy="41" r="6" fill="#132029"/>
+    <circle cx="40.5" cy="39" r="2" fill="#FFFFFF"/>
+    <circle cx="63.5" cy="39" r="2" fill="#FFFFFF"/>
+    <ellipse cx="50" cy="54" rx="4.2" ry="3.2" fill="#132029"/>
+    <path d="M45 60 h10 v7 a1.6 1.6 0 01-1.6 1.6 h-6.8 A1.6 1.6 0 0145 67 z" fill="#FFFFFF" stroke="#0077A8" stroke-width=".8"/>
+    <line x1="50" y1="60" x2="50" y2="68.6" stroke="#0077A8" stroke-width="1"/>
+  </svg>
+
+  <div class="ttl">
+    <h1>Карта&nbsp;Go<em>.</em></h1>
+    <p>Шесть областей языка в порядке, в котором они опираются друг на друга. Читается слева направо: каждая следующая область пользуется тем, что объяснено в предыдущей.</p>
+  </div>
+
+  <div class="howto">
+    <div class="hint">
+      <b>Как читать.</b> Стрелка между колонками значит «дальше нужно то, что слева».
+      Белые блоки — понятия. Цветные блоки с подписью <b>ОТЛИЧИЕ</b> — пары, которые чаще всего путают между собой.
+    </div>
+    <div class="hint">
+      <span class="key">→ зависит от предыдущего</span><br>
+      <span class="key">↳ ведёт к другой теме</span><br>
+      <b>Цвет</b> = область. Он один и тот же у заголовка, точки и полоски кода.
+    </div>
+  </div>
+</header>
+
+<!-- ================= КАРТА ================= -->
+<main class="map">
+
+  <!-- ---------- 1. ПРОГРАММА ---------- -->
+  <section class="col" style="--tone:var(--base)">
+    <div class="stage"><span class="num">1</span><h2>Программа</h2><span>из чего собрана</span></div>
+
+    <article class="node">
+      <h3><i></i>Пакет и точка входа</h3>
+      <p>Файл начинается со слова <code>package</code> — это имя папки-пакета. Пакет с именем <span class="t">main</span> и функцией <span class="t">main</span> внутри — единственное, что можно запустить.</p>
+      <pre>package main
+
+func main() {
+}</pre>
+      <p>Любое другое имя пакета — <b>библиотека</b>: она компилируется, но сама не запускается, её подключают другие.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Как код становится программой</h3>
+      <p>Go — <b>компилируемый</b> язык. Твой текст не выполняется напрямую: сначала компилятор целиком переводит его в машинный код процессора.</p>
+      <dl class="def"><dt>исходник</dt><dd>файл <code>.go</code>, текст, который читает человек</dd></dl>
+      <dl class="def"><dt>компиляция</dt><dd>перевод текста в машинный код</dd></dl>
+      <dl class="def"><dt>бинарник</dt><dd>готовый файл-программа, который читает процессор</dd></dl>
+      <p>Ошибку компилятор находит <b>до запуска</b>. Поэтому в Go программа либо не собирается вовсе, либо работает.</p>
+    </article>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> go run и go build</div>
+      <div class="pair">
+        <div class="side">
+          <h4>go run .</h4>
+          <ul>
+            <li>собирает во <b>временную</b> папку</li>
+            <li>запускает</li>
+            <li>файл <b>удаляет</b></li>
+            <li>для проверки на ходу</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>go build .</h4>
+          <ul>
+            <li>собирает <b>рядом с кодом</b></li>
+            <li>не запускает</li>
+            <li>файл <b>остаётся</b></li>
+            <li>чтобы отдать или хранить</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">Бинарник Go <b>ни от чего не зависит</b> — внутри уже всё нужное, поэтому весит мегабайты. Он собран под конкретную систему: сделанный на Mac на Linux не запустится.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Имя решает видимость</h3>
+      <p>Имя <b>с большой буквы</b> — видно из других пакетов. <b>С маленькой</b> — только внутри своего. Это вся система доступа в языке.</p>
+      <p><code>func Sum()</code> видна снаружи · <code>func sum()</code> нет</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Модуль и чужой код</h3>
+      <p><b>Модуль</b> — папка с файлом <code>go.mod</code>, где записано имя проекта. С него начинается любая работа.</p>
+      <pre>go mod init myproject</pre>
+      <p><code>import</code> подключает чужой пакет. Всё, что идёт в поставке Go, доступно сразу — качать ничего не надо.</p>
+      <div class="zero">
+        <div><code>fmt</code> печать</div>
+        <div><code>strings</code> строки</div>
+        <div><code>strconv</code> число ↔ строка</div>
+        <div><code>os</code> аргументы и файлы</div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ---------- 2. ЗНАЧЕНИЯ ---------- -->
+  <section class="col" style="--tone:var(--val)">
+    <div class="stage"><span class="num">2</span><h2>Значения</h2><span>что программа хранит</span></div>
+
+    <article class="node">
+      <h3><i></i>Переменная и тип</h3>
+      <p><b>Переменная</b> — имя, за которым стоит значение. <b>Тип</b> решает, что там можно хранить и что с этим можно делать.</p>
+      <pre>x := 10        // создать
+x = 20         // изменить
+var y int      // создать пустой
+const Pi = 3.14</pre>
+      <dl class="def"><dt>:=</dt><dd>создаёт <b>новую</b> переменную, работает только внутри функции</dd></dl>
+      <dl class="def"><dt>=</dt><dd>записывает в <b>уже существующую</b></dd></dl>
+      <dl class="def"><dt>const</dt><dd>значение, которое нельзя менять</dd></dl>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Нулевое значение</h3>
+      <p>В Go нет «пустой» переменной. Всё созданное сразу имеет <b>нулевое значение</b> своего типа — им можно пользоваться, не боясь мусора.</p>
+      <div class="zero">
+        <div><code>int</code> <b>0</b></div>
+        <div><code>float64</code> <b>0</b></div>
+        <div><code>string</code> <b>""</b></div>
+        <div><code>bool</code> <b>false</b></div>
+        <div>указатель, слайс, map <b>nil</b></div>
+      </div>
+    </article>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> целое и дробное</div>
+      <div class="pair">
+        <div class="side">
+          <h4>int</h4>
+          <ul>
+            <li>целые числа</li>
+            <li><b>7/2 = 3</b>, остаток отброшен</li>
+            <li>точно всегда</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>float64</h4>
+          <ul>
+            <li>дробные числа</li>
+            <li><b>7.0/2 = 3.5</b></li>
+            <li>точно <b>не</b> всегда</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">Дробные хранятся приблизительно, поэтому <b>сравнивать их через <code>==</code> нельзя</b>: <code>0.1+0.2</code> не равно <code>0.3</code>. Сравнивают разницу с очень малым числом.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Типы сами не смешиваются</h3>
+      <p>Go <b>не приводит типы за тебя</b>. Сложить <code>int</code> и <code>float64</code> нельзя — не соберётся. Нужно перевести явно.</p>
+      <pre>var a int = 3
+var b float64 = 1.5
+float64(a) + b   // 4.5</pre>
+      <p class="link">↳ Дальше это станет важно в <b>наборах</b>: тип элемента там тоже строгий.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Операторы</h3>
+      <div class="zero">
+        <div><code>+ - * /</code> счёт</div>
+        <div><code>%</code> остаток от деления</div>
+        <div><code>++ --</code> на единицу</div>
+      </div>
+      <div class="zero">
+        <div><code>==</code> равно</div>
+        <div><code>!=</code> не равно</div>
+        <div><code>&lt; &gt; &lt;= &gt;=</code> сравнение</div>
+      </div>
+      <p><code>%</code> — самый нужный на экзаменах: <code>n % 2 == 0</code> проверяет чётность, <code>n % 10</code> даёт последнюю цифру числа.</p>
+      <p><code>+</code> у строк означает <b>склейку</b>, а не сложение: <code>"a" + "b"</code> даёт <code>"ab"</code>.</p>
+    </article>
+  </section>
+
+  <!-- ---------- 3. ТЕКСТ ---------- -->
+  <section class="col" style="--tone:var(--txt)">
+    <div class="stage"><span class="num">3</span><h2>Текст</h2><span>особый вид значения</span></div>
+
+    <article class="node">
+      <h3><i></i>Строка — это байты</h3>
+      <p>Строка хранится не как набор букв, а как набор <b>байтов</b>. Для латиницы одна буква = один байт, для кириллицы = два.</p>
+      <pre>s := "Привет"
+len(s)   // 12, а не 6
+s[0]     // 208 — байт</pre>
+      <p>Поэтому <b><code>len</code> считает байты</b>, а взятие <code>s[i]</code> даёт число, а не букву.</p>
+    </article>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> byte и rune</div>
+      <div class="pair">
+        <div class="side">
+          <h4>byte</h4>
+          <ul>
+            <li>одна <b>ячейка памяти</b></li>
+            <li>число 0…255</li>
+            <li>другое имя типа <code>uint8</code></li>
+            <li>даёт <code>s[i]</code></li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>rune</h4>
+          <ul>
+            <li>один <b>символ</b> любого языка</li>
+            <li>число-код символа</li>
+            <li>другое имя типа <code>int32</code></li>
+            <li>даёт <code>range</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">Нужны символы, а не байты — иди по строке через <code>range</code> либо переведи её в <code>[]rune</code>. Тогда <b>длина совпадёт с числом букв</b>.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Строку нельзя изменить</h3>
+      <p>Строка <b>неизменяема</b>: <code>s[0] = 'H'</code> не соберётся никогда. Изменение — это всегда <b>сборка новой строки</b>.</p>
+      <pre>s = s + "!"        // новая строка
+r := []rune(s)     // копия в рунах
+r[0] = 'П'         // её менять можно
+s = string(r)      // и собрать обратно</pre>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Символ и строка — разное</h3>
+      <p>В одинарных кавычках — <b>один символ</b>, это число. В двойных — <b>строка</b>, даже если буква одна.</p>
+      <p><code>'a'</code> это руна 97 · <code>"a"</code> это строка длиной 1</p>
+      <p><code>'9' - '0'</code> даёт число <b>9</b> — так цифра-символ превращается в цифру-число.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Готовые инструменты</h3>
+      <p>Их даёт стандартная библиотека. На заданиях школы часто <b>запрещены</b> — тогда то же самое пишут руками.</p>
+      <div class="frow" style="margin-bottom:.6mm"><code>strings.Split</code><span>строка → слова</span></div>
+      <div class="frow" style="margin-bottom:.6mm"><code>strings.Join</code><span>слова → строка</span></div>
+      <div class="frow" style="margin-bottom:.6mm"><code>strings.Contains</code><span>есть ли кусок внутри</span></div>
+      <div class="frow" style="margin-bottom:.6mm"><code>strconv.Atoi</code><span>строка → число</span></div>
+      <div class="frow"><code>strconv.Itoa</code><span>число → строка</span></div>
+    </article>
+  </section>
+
+  <!-- ---------- 4. НАБОРЫ ---------- -->
+  <section class="col" style="--tone:var(--set)">
+    <div class="stage"><span class="num">4</span><h2>Наборы</h2><span>много значений вместе</span></div>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> массив и слайс</div>
+      <div class="pair">
+        <div class="side">
+          <h4>[3]int — массив</h4>
+          <ul>
+            <li>длина <b>вшита в тип</b></li>
+            <li>длина <b>не меняется</b> никогда</li>
+            <li><code>[3]int</code> и <code>[5]int</code> — <b>разные типы</b></li>
+            <li>при передаче <b>копируется весь</b></li>
+            <li><code>append</code> не работает</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>[]int — слайс</h4>
+          <ul>
+            <li>длины в типе <b>нет</b></li>
+            <li>длина <b>растёт</b> через <code>append</code></li>
+            <li>тип один — <code>[]int</code></li>
+            <li>при передаче копируется <b>только окно</b></li>
+            <li>основной рабочий инструмент</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom"><b>Слайс — это окно в массив, а не сами данные.</b> Внутри него лежат три числа: где начало, сколько видно (<code>len</code>) и сколько влезет (<code>cap</code>). Данные лежат отдельно, и у двух слайсов они могут быть общими.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Как работать со слайсом</h3>
+      <pre>s := []int{1, 2, 3}
+s = append(s, 4)   // s = обязательно
+len(s)             // сколько видно
+cap(s)             // сколько влезет
+s[1:3]             // с 1 по 2</pre>
+      <p><code>append</code> <b>возвращает новый слайс</b> и не меняет старый — поэтому результат обязательно присваивают обратно.</p>
+      <p>Настоящая копия данных делается только через <code>copy</code>. Простое <code>b := a</code> копирует окно, и запись в <code>b</code> изменит <code>a</code>.</p>
+    </article>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> слайс и map</div>
+      <div class="pair">
+        <div class="side">
+          <h4>слайс</h4>
+          <ul>
+            <li>адрес — <b>номер</b> 0,1,2…</li>
+            <li>номер задаёт язык</li>
+            <li>порядок <b>сохраняется</b></li>
+            <li>за границей — <b>падение</b></li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>map</h4>
+          <ul>
+            <li>адрес — <b>ключ</b>, любой</li>
+            <li>ключ выбираешь сам</li>
+            <li>порядок <b>случайный</b></li>
+            <li>нет ключа — <b>нулевое значение</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">Порядок обхода <code>map</code> Go перемешивает <b>намеренно</b>, чтобы на него не полагались. Нужен предсказуемый вывод — собери ключи в слайс и отсортируй.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Как работать с map</h3>
+      <pre>m := make(map[string]int)
+m["a"] = 1
+delete(m, "a")
+v, ok := m["нет"]  // 0, false</pre>
+      <p><b><code>ok</code></b> отвечает, лежал ли ключ вообще — иначе «нет ключа» и «ключ со значением 0» не отличить.</p>
+      <p>Без <code>make</code> map равна <code>nil</code>: читать можно, <b>запись обрушит программу</b>.</p>
+    </article>
+  </section>
+
+  <!-- ---------- 5. ДЕЙСТВИЯ ---------- -->
+  <section class="col" style="--tone:var(--act)">
+    <div class="stage"><span class="num">5</span><h2>Действия</h2><span>что программа делает</span></div>
+
+    <article class="node">
+      <h3><i></i>Выбор пути</h3>
+      <pre>if n &gt; 0 &amp;&amp; n &lt; 10 {
+} else {
+}
+
+switch c {
+case 'a', 'e':
+default:
+}</pre>
+      <dl class="def"><dt>&amp;&amp;</dt><dd>верны <b>оба</b> условия</dd></dl>
+      <dl class="def"><dt>||</dt><dd>верно <b>хотя бы одно</b></dd></dl>
+      <p>В <code>switch</code> ветка <b>сама останавливается</b> — <code>break</code> писать не нужно, в отличие от других языков.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Повторение</h3>
+      <p>В Go <b>один-единственный цикл</b> — <code>for</code>. Слов <code>while</code> и <code>do</code> в языке нет.</p>
+      <pre>for i := 0; i &lt; 10; i++ {}  // счётчик
+for n &gt; 0 {}                // пока верно
+for {}                      // вечный
+for i, v := range s {}      // по набору</pre>
+      <p><code>break</code> выходит из цикла целиком, <code>continue</code> переходит к следующему шагу.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Функция</h3>
+      <p>Функция <b>принимает</b> значения и <b>возвращает</b> результат. Тип после скобок обязывает его вернуть.</p>
+      <pre>func Sum(a, b int) int {
+    return a + b
+}</pre>
+      <p>Go возвращает <b>несколько значений сразу</b> — на этом построена работа с ошибками.</p>
+      <pre>func Div(a, b int) (int, error)</pre>
+    </article>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> напечатать и вернуть</div>
+      <div class="pair">
+        <div class="side">
+          <h4>fmt.Println(x)</h4>
+          <ul>
+            <li>показывает <b>человеку</b> на экране</li>
+            <li>программе не отдаёт <b>ничего</b></li>
+            <li>результат <b>нельзя</b> присвоить</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>return x</h4>
+          <ul>
+            <li>отдаёт значение <b>программе</b></li>
+            <li>на экране не появляется</li>
+            <li>результат <b>можно</b> присвоить</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom"><code>return</code> к тому же <b>немедленно прекращает функцию</b> — код после него не выполнится никогда.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Где живёт переменная</h3>
+      <p>Переменная живёт <b>только внутри тех фигурных скобок</b>, где создана. Вышли из блока — её больше нет.</p>
+      <pre>for i := 0; i &lt; 3; i++ {
+    x := i * 2   // x живёт
+}                // здесь x уже нет</pre>
+      <p>Поэтому накопитель, нужный <b>после</b> цикла, создают <b>до</b> него. И ещё: неиспользованная переменная — <b>ошибка сборки</b>, а не замечание.</p>
+    </article>
+  </section>
+
+  <!-- ---------- 6. СВЯЗИ ---------- -->
+  <section class="col" style="--tone:var(--mem)">
+    <div class="stage"><span class="num">6</span><h2>Связи</h2><span>значение или ссылка</span></div>
+
+    <div class="vs">
+      <div class="cap"><span class="mark">ОТЛИЧИЕ</span> копия и ссылка</div>
+      <div class="pair">
+        <div class="side">
+          <h4>передаётся копия</h4>
+          <ul>
+            <li>число, строка, <code>bool</code></li>
+            <li><b>массив</b> целиком</li>
+            <li><code>struct</code></li>
+            <li>изменения внутри функции <b>снаружи не видны</b></li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>передаётся ссылка</h4>
+          <ul>
+            <li>указатель <code>*T</code></li>
+            <li><b>слайс</b> и <b>map</b></li>
+            <li>изменение элемента <b>видно снаружи</b></li>
+            <li>но <code>append</code> снаружи <b>не виден</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">Это самая частая причина «поменял, а не изменилось». Если функция должна <b>дописывать</b> в слайс — пусть она его <b>возвращает</b>.</div>
+    </div>
+
+    <article class="node">
+      <h3><i></i>Указатель</h3>
+      <p><b>Указатель</b> — адрес значения, а не само значение. Нужен, чтобы функция меняла оригинал, а не копию.</p>
+      <pre>func Older(u *User) {
+    u.Age++
+}
+Older(&amp;u)</pre>
+      <dl class="def"><dt>&amp;x</dt><dd>взять <b>адрес</b> значения</dd></dl>
+      <dl class="def"><dt>*T</dt><dd>тип «адрес значения типа T»</dd></dl>
+      <dl class="def"><dt>nil</dt><dd>указатель <b>в никуда</b></dd></dl>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Свой тип из полей</h3>
+      <p><code>struct</code> — свой тип из нескольких значений под одним именем.</p>
+      <pre>type User struct {
+    Name string
+    Age  int
+}
+u := User{Name: "Нурс", Age: 30}</pre>
+      <p class="link">↳ Поля тоже подчиняются правилу большой буквы из <b>области 1</b>.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Ошибка — это значение</h3>
+      <p>В Go нет исключений. Функция, которая может не справиться, <b>возвращает ошибку вторым значением</b>.</p>
+      <pre>n, err := strconv.Atoi(s)
+if err != nil {
+    // не получилось
+}</pre>
+      <p><code>nil</code> в переменной ошибки значит <b>ошибки не было</b>. До проверки результату доверять нельзя.</p>
+    </article>
+
+    <article class="node">
+      <h3><i></i>Метод — функция своего типа</h3>
+      <p>Если в скобках <b>перед</b> именем указать тип, функция станет <b>методом</b> этого типа.</p>
+      <pre>func (u User) Hello() string {
+    return "Привет, " + u.Name
+}
+u.Hello()</pre>
+      <p>Со звёздочкой <code>(u *User)</code> метод меняет оригинал, без неё — копию. Правило то же, что у функций.</p>
+    </article>
+  </section>
+
+</main>
+
+<!-- ================= НИЗ ================= -->
+<footer class="foot">
+
+  <section class="fbox" style="--tone:var(--base)">
+    <h3><i></i>Команды, которыми всё это запускается</h3>
+    <div class="fgrid">
+      <div class="frow"><code>go run .</code><span>собрать и сразу выполнить</span></div>
+      <div class="frow"><code>go build .</code><span>собрать бинарник и оставить</span></div>
+      <div class="frow"><code>gofmt -w .</code><span>расставить отступы по правилам</span></div>
+      <div class="frow"><code>go vet .</code><span>найти подозрительные места</span></div>
+      <div class="frow"><code>go mod init имя</code><span>создать модуль в папке</span></div>
+      <div class="frow"><code>go doc fmt.Println</code><span>справка не выходя из терминала</span></div>
+    </div>
+  </section>
+
+  <section class="fbox" style="--tone:var(--val)">
+    <h3><i></i>Как показать значение</h3>
+    <div class="frow"><code>Println</code><span>печатает и переводит строку</span></div>
+    <div class="frow"><code>Print</code><span>печатает без перевода строки</span></div>
+    <div class="frow"><code>Printf</code><span>печатает по шаблону</span></div>
+    <div class="frow"><code>Sprintf</code><span><b>возвращает</b> строку, не печатает</span></div>
+    <div class="zero" style="margin-top:.6mm">
+      <div><code>%d</code> число</div><div><code>%s</code> строка</div><div><code>%v</code> любое</div>
+      <div><code>%q</code> в кавычках</div><div><code>%T</code> тип</div><div><code>%c</code> символ</div>
+    </div>
+  </section>
+
+  <section class="fbox" style="--tone:var(--mem)">
+    <h3><i></i>Словарь</h3>
+    <div class="frow"><code>пакет</code><span>папка с файлами Go под одним именем</span></div>
+    <div class="frow"><code>компиляция</code><span>перевод исходника в машинный код</span></div>
+    <div class="frow"><code>бинарник</code><span>готовая программа одним файлом</span></div>
+    <div class="frow"><code>руна</code><span>один символ текста любого языка</span></div>
+    <div class="frow"><code>срез (slice)</code><span>окно в массив с переменной длиной</span></div>
+    <div class="frow"><code>указатель</code><span>адрес значения вместо самого значения</span></div>
+    <div class="frow"><code>nil</code><span>пусто: нет адреса, нет ошибки, нет набора</span></div>
+  </section>
+
+</footer>
+
+<div class="stamp">GO 1.22 · КАРТА ЯЗЫКА · ЧИТАТЬ СЛЕВА НАПРАВО</div>
