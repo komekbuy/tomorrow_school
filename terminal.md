@@ -14,6 +14,19 @@ cd ~                домой (~ — это /Users/komekbuy)
 cd -                вернуться туда, где был до этого
 ```
 
+## Быстро попасть в нужную папку
+
+```
+Tab                 дописывает путь сам: cd ~/Pro + Tab → cd ~/Projects/
+cd + перетащить     написать "cd ", перетащить папку из Finder в терминал
+ts                  моя команда: cd ~/Projects/tomorrow_school
+mini                моя команда: cd ~/Projects/tomorrow_school/sandbox/go-refresh-mini
+```
+
+Своя команда (alias) заводится один раз:
+`echo "alias имя='cd путь'" >> ~/.zshrc`, потом `source ~/.zshrc`.
+`>>` дописывает в конец файла. Один `>` стёр бы весь файл.
+
 ## Файлы и папки
 
 ```
