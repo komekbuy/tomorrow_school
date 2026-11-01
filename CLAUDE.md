@@ -13,7 +13,8 @@
 ## Перед уроком
 
 Прочитать в vault: `wiki/method.md` (протокол урока и гейт), `wiki/progress.md` (где мы),
-`wiki/weak-spots.md` (открытые темы), последний файл в `sessions/`.
+`wiki/weak-spots.md` (открытые темы), `wiki/kartochki.md` (что повторить сегодня),
+последний файл в `sessions/`.
 
 ## Урок
 
