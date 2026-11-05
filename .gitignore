@@ -8,6 +8,13 @@ sudoku-1/
 go-refresh/
 ethical-ai/
 prompt-basics/
+ai-ethics/
+role-prompts/
+reasoning-flow/
+prompt-patterns/
+debug-control/
+tool-prompts/
+creative-ai/
 
 # скомпилированные бинарники
 quad/quad
