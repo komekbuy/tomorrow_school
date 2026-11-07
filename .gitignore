@@ -13,7 +13,7 @@ role-prompts/
 reasoning-flow/
 prompt-patterns/
 debug-control/
-tool-prompts/
+/tool-prompts/
 creative-ai/
 
 # скомпилированные бинарники

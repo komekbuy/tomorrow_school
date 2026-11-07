@@ -1,0 +1,3 @@
+```json
+{"tool": "go_doc", "args": {"symbol": "strings.Split"}}
+```
