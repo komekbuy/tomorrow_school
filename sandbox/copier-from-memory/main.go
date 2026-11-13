@@ -1,3 +1,4 @@
+// 1 начало кода импорт пакетов
 package main
 
 import (
@@ -5,26 +6,31 @@ import (
 	"os"
 )
 
+// 2 фанкция main проверка на то что количество файлов не равно 3
 func main() {
-	if len(os.Args) != 3 { //подсмотрел
-		fmt.Println("usage: go run . <in> <out") //подсмотрел
-		return //подсмотрел
+	if len(os.Args) != 3 {
+		fmt.Println("usage: go run . <in> <out>") //подсмотрел
+		return
 	}
 
+	// 3 присвоить переменные входа и выход
 	input := os.Args[1]
 	output := os.Args[2]
 
-	data, err := os.ReadFile(input) //подсмотрел
-	if err != nil { //подсмотрел
-		fmt.Println("error:", err) //подсмотрел
-		return //подсмотрел
+	// 4 чтение файла + ошибка
+	data, err := os.ReadFile(input)
+	if err != nil {
+		fmt.Println("error", err) //подсмотрел
+		return
 	}
 
-	text := string(data) //подсмотрел
-	err = os.WriteFile(output, []byte(text), 0644) //подсмотрел
-	if err != nil { //подсмотрел
-		fmt.Println("error:", err) //подсмотрел
-		return //подсмотрел
-	}
+	// 3 запись файлы
+		text := string(data)
+
+		err = os.WriteFile(output, []byte(text), 0644) // подсмотрел именно 0644
+		if err != nil {
+			fmt.Println("error", err)
+			return
+		}
+
 }
-
