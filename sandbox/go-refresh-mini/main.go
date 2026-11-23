@@ -3,28 +3,36 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("usage: go run . <in> <out>")
+		fmt.Println("error: <in> <out>")
 		return
 	}
 
-	input := os.Args[1]
-	output := os.Args[2]
+	input := os.Args(1)
+	output := os.Args(2)
 
 	data, err := os.ReadFile(input)
 	if err != nil {
-		fmt.Println("error:", err)
+		fmt.Println("error", err)
 		return
 	}
 
-	text := string(data)
+	text := string(data) //подсмотрел
 
-	err = os.WriteFile(output, []byte(text), 0644)
-	if err != nil {
-		fmt.Println("error:", err)
-		return
+	words := strings.Field(text) //подсмотрел
+
+	for i, w := range words { //подсмотрел
+		if w == (up) { //подсмотрел
+			words[i-1] = strings.ToUpper(words[i-1]) //подсмотрел
+		}
+	}
+
+	result := []string{}
+	for _, w := range words {
+		if w != 
 	}
 }
